@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRYLUNO | Luxury Business Intelligence OS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .brand-font { font-family: 'Cinzel', serif; }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); }
+        .admin-hidden { display: none; }
+    </style>
+</head>
+<body class="bg-[#fcfcfc] text-slate-900">
+
+    <nav class="glass sticky top-0 z-[100] px-6 py-4 flex justify-between items-center border-b">
+        <div class="brand-font text-2xl font-bold tracking-[4px]">BRYLUNO<span class="text-amber-600">.</span></div>
+        <div class="hidden md:flex space-x-8 font-bold text-[11px] uppercase tracking-widest">
+            <a href="javascript:void(0)" onclick="showTab('home')" class="hover:text-amber-600">Collection</a>
+            <a href="javascript:void(0)" onclick="showTab('reseller')" class="hover:text-amber-600">Partner Hub</a>
+            <a href="javascript:void(0)" onclick="openAdmin()" class="bg-black text-white px-4 py-2 rounded-lg">Executive Admin</a>
+        </div>
+    </nav>
+
+    <main id="main-content" class="min-h-screen">
+        
+        <section id="tab-home" class="tab-pane active p-6 md:p-12">
+            <div class="bg-black rounded-[40px] p-12 text-white mb-12 text-center relative overflow-hidden">
+                <div class="relative z-10">
+                    <p class="text-amber-500 tracking-[5px] text-xs font-bold mb-4 uppercase">Established 2026</p>
+                    <h1 class="brand-font text-4xl md:text-6xl mb-6">UNFORGETTABLE LUXURY</h1>
+                    <button class="bg-amber-600 px-8 py-4 rounded-full font-black text-sm hover:scale-105 transition">EXPLORE NOW</button>
+                </div>
+            </div>
+
+            <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="animate-pulse bg-white p-10 rounded-3xl h-64 border"></div>
+                <div class="animate-pulse bg-white p-10 rounded-3xl h-64 border"></div>
+                <div class="animate-pulse bg-white p-10 rounded-3xl h-64 border"></div>
+            </div>
+        </section>
+
+        <section id="tab-admin" class="tab-pane hidden p-6 md:p-12">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+                <div>
+                    <h2 class="brand-font text-3xl font-bold">Business Intelligence</h2>
+                    <p class="text-slate-500 font-bold">Live performance from Google Sheets</p>
+                </div>
+                <button onclick="logout()" class="bg-red-500 text-white px-6 py-2 rounded-xl text-xs font-bold">LOGOUT SYSTEM</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                <div class="bg-white p-8 rounded-[30px] shadow-sm border-b-4 border-amber-600">
+                    <p class="text-[10px] font-black text-slate-400 uppercase">Gross Revenue</p>
+                    <h3 class="text-2xl font-black mt-2 tracking-tight">LKR 1,245,000</h3>
+                </div>
+                <div class="bg-white p-8 rounded-[30px] shadow-sm border-b-4 border-slate-900">
+                    <p class="text-[10px] font-black text-slate-400 uppercase">Active Resellers</p>
+                    <h3 class="text-2xl font-black mt-2 tracking-tight">42 Partners</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-10 rounded-[40px] shadow-sm border border-slate-100">
+                <h3 class="font-black text-lg mb-8">Sales Velocity Chart</h3>
+                <canvas id="bizChart" height="120"></canvas>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="md:hidden fixed bottom-6 left-6 right-6 glass border rounded-[30px] p-4 flex justify-around shadow-2xl z-[1000]">
+        <button onclick="showTab('home')" class="text-slate-400 hover:text-amber-600"><i class="fa-solid fa-house-chimney text-xl"></i></button>
+        <button onclick="showTab('reseller')" class="text-slate-400 hover:text-amber-600"><i class="fa-solid fa-briefcase text-xl"></i></button>
+        <button onclick="openAdmin()" class="text-slate-400 hover:text-black"><i class="fa-solid fa-user-shield text-xl"></i></button>
+    </div>
+
+    <script>
+        // GOOGLE SHEET LINK CONFIG
+        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRukBm2FbNlYSrOopGqy0oh2PrXiIfuL3vNey5L4QC8MMqSCBNFvh6pJQFFFAIF3USo5bu_UtPefR7_/pub?output=csv';
+
+        async function loadProducts() {
+            try {
+                const response = await fetch(SHEET_CSV_URL);
+                const data = await response.text();
+                const rows = data.split('\n').slice(1);
+                
+                let html = '';
+                rows.forEach(row => {
+                    const cols = row.split(',');
+                    if(cols.length < 2) return;
+                    html += `
+                        <div class="bg-white p-6 rounded-[35px] border border-slate-100 shadow-sm hover:shadow-2xl transition duration-500 group">
+                            <div class="h-64 bg-slate-100 rounded-[25px] mb-6 overflow-hidden relative">
+                                <img src="${cols[4]}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                                <div class="absolute top-4 right-4 bg-black text-white text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest">${cols[3] || 'In Stock'}</div>
+                            </div>
+                            <h3 class="brand-font text-xl font-bold">${cols[1]}</h3>
+                            <div class="flex justify-between items-center mt-4">
+                                <p class="text-amber-600 font-black text-xl">LKR ${cols[2]}</p>
+                                <a href="https://wa.me/94752351754?text=I want to order ${cols[1]}" class="bg-slate-900 text-white p-4 rounded-2xl hover:bg-amber-600 transition">
+                                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                });
+                document.getElementById('product-grid').innerHTML = html;
+            } catch (error) {
+                console.error("Error loading products:", error);
+            }
+        }
+
+        function showTab(id) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+            document.getElementById('tab-' + id).classList.remove('hidden');
+            if(id === 'admin') initChart();
+            window.scrollTo(0,0);
+        }
+
+        function openAdmin() {
+            let pass = prompt("ENTER EXECUTIVE SECURITY KEY:");
+            if(pass === "1234") {
+                showTab('admin');
+            } else {
+                alert("ACCESS DENIED!");
+            }
+        }
+
+        function logout() {
+            showTab('home');
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('bizChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Sales Momentum',
+                        data: [5000, 15000, 8000, 22000, 18000, 45000, 60000],
+                        borderColor: '#d97706',
+                        backgroundColor: 'rgba(217, 119, 6, 0.05)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 4
+                    }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
+            });
+        }
+
+        window.onload = loadProducts;
+    </script>
+</body>
+</html>
