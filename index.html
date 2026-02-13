@@ -3,184 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRYLUNO CORE v2.0 | Advanced Enterprise System</title>
-    
+    <title>BRYLUNO | Official Reseller OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syncopate:wght@700&display=swap');
-        :root { --accent: #d4af37; --bg: #030303; --card: rgba(255,255,255,0.03); }
-        body { background: var(--bg); color: #fff; font-family: 'Space Grotesk', sans-serif; transition: 0.5s; overflow-x: hidden; }
-        .sync-font { font-family: 'Syncopate', sans-serif; text-transform: uppercase; letter-spacing: 5px; }
-        .glass { background: var(--card); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); }
-        .gold-grad { background: linear-gradient(135deg, #d4af37 0%, #f7e08b 50%, #d4af37 100%); -webkit-background-clip: text; -webkit-fill-color: transparent; color: #d4af37; }
-        .page { display: none; animation: fadeIn 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap');
+        body { font-family: 'Outfit', sans-serif; background: #000; color: white; overflow-x: hidden; }
+        .gold-text { background: linear-gradient(45deg, #c5a059, #fff, #c5a059); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .page { display: none; animation: slideIn 0.5s ease forwards; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        .btn-premium { background: linear-gradient(45deg, #d4af37, #b8860b); color: #000; font-weight: 800; border-radius: 12px; transition: 0.3s; }
-        .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3); }
-        .input-dark { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; width: 100%; outline: none; transition: 0.3s; }
-        .input-dark:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(212, 175, 55, 0.1); }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .tier-card { transition: 0.4s; border: 1px solid rgba(197, 160, 89, 0.2); }
+        .tier-card:hover { transform: translateY(-10px); border-color: #c5a059; box-shadow: 0 10px 30px rgba(197, 160, 89, 0.2); }
+        .input-box { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; color: white; outline: none; }
+        .input-box:focus { border-color: #c5a059; }
     </style>
 </head>
 <body>
 
-    <nav class="fixed top-0 w-full z-[1000] glass px-8 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            <div class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center font-black text-black shadow-[0_0_20px_rgba(212,175,55,0.5)]">B</div>
-            <h1 class="sync-font text-lg font-bold gold-grad">BRYLUNO <span class="text-white opacity-40 font-light">OS</span></h1>
-        </div>
-        <div class="flex items-center gap-6">
-            <div id="online-status" class="flex items-center gap-2 text-[10px] uppercase tracking-widest text-green-500">
-                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> SYSTEM LIVE
-            </div>
-            <button onclick="adminGate()" class="text-amber-500 hover:rotate-90 transition-all duration-500"><i class="fa-solid fa-gear text-xl"></i></button>
-        </div>
+    <nav class="fixed top-0 w-full z-[1000] glass px-6 py-4 flex justify-between items-center border-b border-white/5">
+        <div class="text-xl font-black tracking-tighter gold-text">BRYLUNO <span class="text-[10px] text-white/30 tracking-widest ml-2 uppercase">Core v3.0</span></div>
+        <button onclick="adminCheck()" class="text-amber-500 bg-amber-500/10 p-2 rounded-full"><i class="fa-solid fa-fingerprint"></i></button>
     </nav>
 
     <main class="pt-24 pb-32">
         
-        <section id="home" class="page active px-6 max-w-7xl mx-auto">
-            <div class="flex justify-between items-end mb-12">
-                <div>
-                    <h2 class="sync-font text-3xl mb-2">Inventory</h2>
-                    <p class="text-xs text-white/40 tracking-[5px]">GLOBAL ASSET DISTRIBUTION</p>
+        <section id="home" class="page active px-6 max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-black italic gold-text uppercase">Luxury Pack Tiers</h2>
+                <p class="text-[10px] tracking-[6px] text-white/30 uppercase mt-2">Choose your business level</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="tier-card glass p-8 rounded-[40px] text-center">
+                    <h3 class="text-xl font-bold mb-2">BASIC PACK</h3>
+                    <p class="text-xs text-white/40 mb-6 tracking-widest">FOR STUDENTS</p>
+                    <div class="text-4xl font-black mb-6 gold-text">Rs. 4,500</div>
+                    <ul class="text-[11px] text-left space-y-3 text-white/60 mb-8">
+                        <li><i class="fa-solid fa-check text-amber-500 mr-2"></i> Small Budget Design</li>
+                        <li><i class="fa-solid fa-check text-amber-500 mr-2"></i> Standard Packaging</li>
+                        <li><i class="fa-solid fa-circle-dollar-to-slot text-green-500 mr-2"></i> Comm: Rs. 800</li>
+                    </ul>
+                    <button onclick="order('Basic', 4500)" class="w-full py-4 bg-white/10 rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-white hover:text-black transition">Select Pack</button>
                 </div>
-                <div class="flex gap-4">
-                    <select onchange="filterProducts(this.value)" class="bg-transparent border border-white/10 text-[10px] px-4 py-2 rounded-full uppercase tracking-widest outline-none">
-                        <option value="all">All Pieces</option>
-                        <option value="watch">Watches</option>
-                        <option value="jewelry">Jewelry</option>
-                    </select>
+
+                <div class="tier-card glass p-8 rounded-[40px] text-center border-amber-500/50 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-amber-500 text-black text-[8px] font-black px-4 py-1 rounded-bl-xl uppercase">Best Seller</div>
+                    <h3 class="text-xl font-bold mb-2">PREMIUM</h3>
+                    <p class="text-xs text-white/40 mb-6 tracking-widest">FOR COUPLES</p>
+                    <div class="text-4xl font-black mb-6 gold-text">Rs. 6,000</div>
+                    <ul class="text-[11px] text-left space-y-3 text-white/60 mb-8">
+                        <li><i class="fa-solid fa-check text-amber-500 mr-2"></i> High Emotional Value</li>
+                        <li><i class="fa-solid fa-check text-amber-500 mr-2"></i> Voice QR Code</li>
+                        <li><i class="fa-solid fa-circle-dollar-to-slot text-green-500 mr-2"></i> Comm: Rs. 1,000</li>
+                    </ul>
+                    <button onclick="order('Premium', 6000)" class="w-full py-4 bg-amber-500 text-black rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-white transition">Order Now</button>
+                </div>
+
+                <div class="tier-card glass p-8 rounded-[40px] text-center">
+                    <h3 class="text-xl font-bold mb-2">LUXURY</h3>
+                    <p class="text-xs text-white/40 mb-6 tracking-widest">PROPOSALS/WEDDINGS</p>
+                    <div class="text-4xl font-black mb-6 gold-text">Rs. 10,000</div>
+                    <ul class="text-[11px] text-left space-y-3 text-white/60 mb-8">
+                        <li><i class="fa-solid fa-check text-amber-500 mr-2"></i> Big Box & LED Name</li>
+                        <li><i class="fa-solid fa-check text-amber-500 mr-2"></i> Polaroid Photos</li>
+                        <li><i class="fa-solid fa-circle-dollar-to-slot text-green-500 mr-2"></i> Comm: Rs. 1,500</li>
+                    </ul>
+                    <button onclick="order('Luxury', 10000)" class="w-full py-4 bg-white/10 rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-white hover:text-black transition">Select Pack</button>
                 </div>
             </div>
-            <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                </div>
         </section>
 
         <section id="partners" class="page px-6">
-            <div class="max-w-xl mx-auto glass p-12 rounded-[50px] border-amber-500/20 shadow-2xl">
-                <div class="text-center mb-10">
-                    <i class="fa-solid fa-crown text-4xl text-amber-500 mb-4"></i>
-                    <h2 class="sync-font text-2xl gold-grad">Partner Application</h2>
-                    <p class="text-[10px] text-white/40 mt-2 tracking-widest uppercase">Bryluno Luxury Network</p>
-                </div>
-                <form onsubmit="applyNow(event)" class="space-y-5">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="text" id="app-name" placeholder="Full Name" class="input-dark" required>
-                        <input type="text" id="app-phone" placeholder="WhatsApp Number" class="input-dark" required>
+            <div class="max-w-xl mx-auto space-y-6">
+                <div class="glass p-8 rounded-[35px] border-amber-500/20">
+                    <h3 class="text-xl font-bold gold-text mb-4 uppercase italic">Reseller Agreement</h3>
+                    <div class="text-[10px] text-white/50 space-y-3 leading-relaxed">
+                        <p><span class="text-amber-500">●</span> Registration Fee: Rs. 500 (Non-refundable)</p>
+                        <p><span class="text-amber-500">●</span> 100% Advance Payment Only. No COD.</p>
+                        <p><span class="text-amber-500">●</span> Commissions: Weekly every Sunday.</p>
+                        <p><span class="text-amber-500">●</span> Fake Details = Permanent Ban.</p>
                     </div>
-                    <input type="email" id="app-email" placeholder="Gmail Address" class="input-dark" required>
-                    <input type="password" id="app-pass" placeholder="Account Password" class="input-dark" required>
-                    <div class="flex items-center gap-3 px-2">
-                        <input type="checkbox" required class="accent-amber-500">
-                        <label class="text-[10px] text-white/40 uppercase">I agree to 15% commission terms</label>
-                    </div>
-                    <button type="submit" class="w-full btn-premium py-5 uppercase tracking-[4px] text-xs">Initialize Membership</button>
-                </form>
-            </div>
-        </section>
+                </div>
 
-        <section id="admin" class="page px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-                <div class="glass p-6 rounded-3xl">
-                    <p class="text-[10px] text-white/40 uppercase mb-2">Net Asset Value</p>
-                    <h3 id="stat-asset" class="text-3xl font-bold gold-grad">LKR 0</h3>
-                </div>
-                <div class="glass p-6 rounded-3xl">
-                    <p class="text-[10px] text-white/40 uppercase mb-2">Total Views</p>
-                    <h3 id="stat-views" class="text-3xl font-bold">0</h3>
-                </div>
-                <div class="glass p-6 rounded-3xl">
-                    <p class="text-[10px] text-white/40 uppercase mb-2">Active Resellers</p>
-                    <h3 id="stat-resellers" class="text-3xl font-bold text-amber-500">0</h3>
-                </div>
-                <div class="glass p-6 rounded-3xl">
-                    <p class="text-[10px] text-white/40 uppercase mb-2">System Health</p>
-                    <h3 class="text-3xl font-bold text-green-500">99.9%</h3>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="glass p-8 rounded-[40px]">
-                        <div class="flex justify-between items-center mb-8">
-                            <h4 class="sync-font text-sm">Application Queue</h4>
-                            <span id="notif-pill" class="bg-red-600 text-[10px] px-3 py-1 rounded-full font-bold">0 NEW</span>
+                <div class="glass p-8 rounded-[35px]">
+                    <h4 class="text-sm font-bold mb-6 tracking-widest uppercase">Apply for Partnership</h4>
+                    <form onsubmit="handleApply(event)" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="p-name" placeholder="Full Name" class="input-box" required>
+                            <input type="text" id="p-wa" placeholder="WhatsApp No" class="input-box" required>
                         </div>
-                        <div id="admin-user-list" class="space-y-4">
-                            </div>
-                    </div>
-                    
-                    <div class="glass p-8 rounded-[40px]">
-                        <h4 class="sync-font text-sm mb-6">Product Performance (Engagement)</h4>
-                        <canvas id="analyticsChart" height="150"></canvas>
-                    </div>
-                </div>
-
-                <div class="space-y-6">
-                    <div class="glass p-8 rounded-[40px]">
-                        <h4 class="sync-font text-sm mb-6 text-amber-500">System Broadcast</h4>
-                        <textarea id="broadcast-msg" class="input-dark text-xs h-24 mb-4" placeholder="Message to all resellers..."></textarea>
-                        <button onclick="sendBroadcast()" class="w-full py-3 bg-white text-black text-[10px] font-black uppercase rounded-xl">Push Notification</button>
-                    </div>
-                    <div class="glass p-8 rounded-[40px]">
-                        <h4 class="sync-font text-sm mb-6">Security Logs</h4>
-                        <div id="logs" class="text-[9px] font-mono text-white/30 space-y-2 h-48 overflow-y-auto">
-                            <p>> [SYSTEM] Core Encrypted</p>
+                        <input type="email" id="p-email" placeholder="Email" class="input-box" required>
+                        <input type="text" id="p-district" placeholder="District" class="input-box" required>
+                        <textarea id="p-why" placeholder="Why do you want to join Bryluno?" class="input-box h-24" required></textarea>
+                        <div class="p-4 border border-dashed border-white/20 rounded-xl">
+                            <p class="text-[9px] text-white/30 mb-2 uppercase tracking-widest">Reg Fee (Rs. 500) Screenshot Link</p>
+                            <input type="text" id="p-ss" placeholder="Paste Link (ImgBB/Drive)" class="input-box text-[11px]" required>
                         </div>
-                    </div>
+                        <button type="submit" class="w-full bg-white text-black py-4 rounded-xl font-black uppercase text-[10px] tracking-[4px]">Send Application</button>
+                    </form>
                 </div>
             </div>
         </section>
 
-        <section id="reseller" class="page px-6">
-            <div class="max-w-4xl mx-auto space-y-8">
-                <div class="glass p-12 rounded-[50px] relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                    <div class="flex justify-between items-start mb-10">
-                        <div>
-                            <p class="text-[10px] text-amber-500 font-bold tracking-[5px] mb-2 uppercase">Official Partner</p>
-                            <h2 id="r-name" class="sync-font text-4xl gold-grad">...</h2>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-[10px] text-white/40 uppercase">Wallet Balance</p>
-                            <h3 id="r-wallet" class="text-2xl font-black">LKR 0.00</h3>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-white/5 p-6 rounded-3xl border border-white/5">
-                            <p class="text-[10px] text-white/40 uppercase mb-1">Commission Rate</p>
-                            <h4 class="text-xl font-bold">15% FIXED</h4>
-                        </div>
-                        <div class="bg-white/5 p-6 rounded-3xl border border-white/5">
-                            <p class="text-[10px] text-white/40 uppercase mb-1">Items Sold</p>
-                            <h4 class="text-xl font-bold">0 Units</h4>
-                        </div>
-                        <button onclick="alert('Withdrawal request sent to Admin.')" class="bg-white text-black p-6 rounded-3xl font-black uppercase text-xs hover:bg-amber-500 transition">Withdraw</button>
+        <section id="admin" class="page px-6 max-w-5xl mx-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-black italic gold-text uppercase">Control Center</h2>
+                <button onclick="location.reload()" class="bg-red-500/20 text-red-500 px-4 py-2 rounded-full text-[10px] font-bold">Log out</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="glass p-8 rounded-[35px]">
+                    <h4 class="text-xs font-bold tracking-widest mb-6 gold-text">PENDING APPLICATIONS</h4>
+                    <div id="admin-user-list" class="space-y-4">
+                        <p class="text-xs text-white/20 italic text-center py-10">Queue Empty</p>
                     </div>
                 </div>
-
-                <div class="glass p-8 rounded-[40px]">
-                    <h4 class="sync-font text-sm mb-6">Marketing Assets</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="aspect-square bg-white/5 rounded-2xl flex flex-col items-center justify-center border border-dashed border-white/20 hover:border-amber-500 cursor-pointer transition">
-                            <i class="fa-solid fa-download text-xl mb-2"></i>
-                            <span class="text-[9px] uppercase font-bold">Price List PDF</span>
+                
+                <div class="glass p-8 rounded-[35px]">
+                    <h4 class="text-xs font-bold tracking-widest mb-6 gold-text">SYSTEM STATS</h4>
+                    <div class="space-y-4">
+                        <div class="flex justify-between p-4 bg-white/5 rounded-2xl">
+                            <span class="text-[10px] text-white/40 uppercase">Total Revenue</span>
+                            <span id="stat-rev" class="font-bold text-green-500 font-mono">LKR 0</span>
                         </div>
-                        <div class="aspect-square bg-white/5 rounded-2xl flex flex-col items-center justify-center border border-dashed border-white/20 hover:border-amber-500 cursor-pointer transition">
-                            <i class="fa-solid fa-image text-xl mb-2"></i>
-                            <span class="text-[9px] uppercase font-bold">Social Posters</span>
+                        <div class="flex justify-between p-4 bg-white/5 rounded-2xl">
+                            <span class="text-[10px] text-white/40 uppercase">Active Resellers</span>
+                            <span id="stat-res" class="font-bold text-amber-500">0</span>
                         </div>
                     </div>
                 </div>
@@ -189,15 +143,14 @@
 
     </main>
 
-    <div class="fixed bottom-10 left-1/2 -translate-x-1/2 glass px-10 py-5 rounded-full flex gap-10 items-center z-[2000] border-white/10 shadow-2xl">
-        <button onclick="showPage('home')" class="nav-btn text-amber-500 scale-125 transition-all"><i class="fa-solid fa-home-alt text-xl"></i></button>
-        <button onclick="showPage('partners')" class="nav-btn text-white/40 hover:text-amber-500 transition-all"><i class="fa-solid fa-handshake text-xl"></i></button>
-        <button onclick="showPage('reseller')" class="nav-btn text-white/40 hover:text-amber-500 transition-all"><i class="fa-solid fa-wallet text-xl"></i></button>
-        <button onclick="adminGate()" class="nav-btn text-white/40 hover:text-amber-500 transition-all"><i class="fa-solid fa-fingerprint text-xl"></i></button>
+    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 glass px-10 py-5 rounded-full flex gap-12 items-center z-[1000] border-white/10 shadow-2xl">
+        <button onclick="showPage('home')" class="hover:text-amber-500 transition"><i class="fa-solid fa-store text-xl"></i></button>
+        <button onclick="showPage('partners')" class="hover:text-amber-500 transition"><i class="fa-solid fa-briefcase text-xl"></i></button>
+        <button onclick="adminCheck()" class="text-amber-500"><i class="fa-solid fa-user-shield text-xl"></i></button>
     </div>
 
     <script>
-        // -- INITIALIZATION --
+        // FIREBASE SETUP
         const firebaseConfig = {
             apiKey: "AIzaSyAoYDclGhL75b14C1fT_5SRsrrEt8B6iyU",
             authDomain: "bryluno-system.firebaseapp.com",
@@ -207,229 +160,90 @@
             messagingSenderId: "666741527124",
             appId: "1:666741527124:web:bebf8a61c085eba11cd3c1"
         };
-        
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
-        const fs = firebase.firestore(); // For Analytics
-        emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); // Replace with your key
 
-        const SHEET_ID = "1BQ819L1qmuatSTgwjXMAR0K-tNQcIIanow7EdthO6Sg";
-        const WA_NUM = "94752351754";
-        let productViews = {};
-        let myChart;
-
-        // -- CORE NAVIGATION --
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            
-            // UI Update for Dock
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.replace('text-amber-500', 'text-white/40'));
-            event.currentTarget.classList.replace('text-white/40', 'text-amber-500');
+            window.scrollTo(0,0);
         }
 
-        // -- INVENTORY & ANALYTICS --
-        async function loadInventory() {
-            try {
-                const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
-                const text = await res.text();
-                const json = JSON.parse(text.substr(47).slice(0, -2));
-                const rows = json.table.rows;
-                
-                const grid = document.getElementById('product-grid');
-                grid.innerHTML = '';
-                let netVal = 0;
-
-                rows.forEach((row, idx) => {
-                    const name = row.c[0]?.v || "Luxury Piece";
-                    const price = row.c[1]?.v || 0;
-                    const img = row.c[2]?.v || "";
-                    const cat = row.c[3]?.v || "general";
-                    netVal += Number(price);
-
-                    // Real-time View Tracking from Firestore
-                    fs.collection('analytics').doc(name).get().then(doc => {
-                        const views = doc.exists ? doc.data().views : 0;
-                        productViews[name] = views;
-                        updateChart();
-                    });
-
-                    grid.innerHTML += `
-                        <div class="glass p-6 rounded-[40px] group hover:border-amber-500/40 transition-all duration-700 relative overflow-hidden" data-category="${cat}">
-                            <div class="h-80 rounded-[30px] overflow-hidden mb-6 relative">
-                                <img src="${img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000" onerror="this.src='https://via.placeholder.com/400x600/111/fff?text=BRYLUNO'">
-                                <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-[8px] font-black tracking-widest uppercase">ID: BRY-${idx+100}</div>
-                            </div>
-                            <div class="flex justify-between items-end">
-                                <div>
-                                    <h3 class="sync-font text-lg gold-grad mb-1">${name}</h3>
-                                    <p class="text-[10px] text-white/40 tracking-[4px]">LKR ${price.toLocaleString()}</p>
-                                </div>
-                                <button onclick="reserve('${name}', '${price}')" class="btn-premium px-6 py-3 text-[10px] uppercase tracking-widest">Reserve</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                document.getElementById('stat-asset').innerText = `LKR ${netVal.toLocaleString()}`;
-                updateLog(`Inventory Synced: ${rows.length} Pieces`);
-            } catch (e) { updateLog("Sheet Sync Failed", "err"); }
+        // WhatsApp Order Logic
+        function order(tier, price) {
+            const msg = `BRYLUNO ORDER REQUEST%0A-----------------%0APack: ${tier}%0APrice: LKR ${price}%0AStatus: Pending Payment`;
+            window.open(`https://wa.me/94752351754?text=${msg}`, '_blank');
         }
 
-        async function reserve(name, price) {
-            // Log analytics
-            const docRef = fs.collection('analytics').doc(name);
-            await docRef.set({ views: firebase.firestore.FieldValue.increment(1) }, { merge: true });
-            
-            const msg = `BRYLUNO RESERVATION%0A-----------------%0AItem: ${name}%0APrice: LKR ${price}%0AStatus: Interested`;
-            window.open(`https://wa.me/${WA_NUM}?text=${msg}`, '_blank');
-        }
-
-        // -- PARTNER LOGIC --
-        async function applyNow(e) {
+        // Application Submission
+        async function handleApply(e) {
             e.preventDefault();
             const data = {
-                name: document.getElementById('app-name').value,
-                phone: document.getElementById('app-phone').value,
-                email: document.getElementById('app-email').value,
-                pass: document.getElementById('app-pass').value
+                name: document.getElementById('p-name').value,
+                wa: document.getElementById('p-wa').value,
+                email: document.getElementById('p-email').value,
+                district: document.getElementById('p-district').value,
+                why: document.getElementById('p-why').value,
+                screenshot: document.getElementById('p-ss').value,
+                status: 'Pending',
+                date: new Date().toLocaleString()
             };
 
             try {
-                const cred = await auth.createUserWithEmailAndPassword(data.email, data.pass);
-                await db.ref('users/' + cred.user.uid).set({
-                    ...data, status: 'Pending', wallet: 0, date: new Date().toISOString()
-                });
-                alert("APPLICATION SENT! We will review your profile shortly.");
+                await db.ref('applications').push(data);
+                alert("APPLICATION SUBMITTED! We will check your Rs. 500 payment and approve soon.");
                 showPage('home');
             } catch (err) { alert(err.message); }
         }
 
-        // -- ADMIN ENGINE --
-        async function adminGate() {
-            const email = prompt("ENTER MASTER EMAIL:");
-            if(!email) return;
-            const pass = prompt("ENCRYPTION KEY:");
-            
-            try {
-                const cred = await auth.signInWithEmailAndPassword(email, pass);
-                if(email === 'bryluno.pvt.ltd@gmail.com') {
+        // Admin Security Gate
+        async function adminCheck() {
+            const email = prompt("Admin Identification:");
+            const pass = prompt("Encryption Key:");
+            if (email === 'bryluno.pvt.ltd@gmail.com') {
+                try {
+                    await auth.signInWithEmailAndPassword(email, pass);
                     showPage('admin');
-                    loadAdminSuite();
-                } else {
-                    db.ref('users/' + cred.user.uid).once('value', snap => {
-                        const u = snap.val();
-                        if(u && u.status === 'Approved') {
-                            document.getElementById('r-name').innerText = u.name;
-                            document.getElementById('r-wallet').innerText = `LKR ${u.wallet || 0}`;
-                            showPage('reseller');
-                        } else {
-                            alert("ACCOUNT UNDER REVIEW.");
-                            auth.signOut();
-                        }
-                    });
-                }
-            } catch (e) { alert("ACCESS DENIED."); }
+                    loadAdminData();
+                } catch (e) { alert("Access Denied."); }
+            } else { alert("Unauthorized."); }
         }
 
-        function loadAdminSuite() {
-            db.ref('users').on('value', snap => {
+        function loadAdminData() {
+            db.ref('applications').on('value', snap => {
                 const list = document.getElementById('admin-user-list');
                 list.innerHTML = '';
-                let pendingCount = 0;
-                let activeCount = 0;
-
+                let count = 0;
                 snap.forEach(child => {
                     const u = child.val();
                     if(u.status === 'Pending') {
-                        pendingCount++;
+                        count++;
                         list.innerHTML += `
-                            <div class="flex justify-between items-center glass p-6 rounded-3xl border-l-4 border-amber-500">
-                                <div>
-                                    <p class="font-bold gold-grad">${u.name}</p>
-                                    <p class="text-[10px] text-white/30">${u.email} | ${u.phone}</p>
-                                </div>
+                            <div class="bg-white/5 p-5 rounded-3xl border border-white/5">
+                                <p class="text-[10px] text-amber-500 font-bold mb-2 uppercase">${u.date}</p>
+                                <h5 class="text-sm font-bold uppercase">${u.name}</h5>
+                                <p class="text-[11px] text-white/40 mb-3">${u.district} | ${u.wa}</p>
+                                <a href="${u.screenshot}" target="_blank" class="text-[9px] text-blue-400 underline uppercase mb-4 block">View Payment SS</a>
                                 <div class="flex gap-2">
-                                    <button onclick="processApp('${child.key}', 'Approved', '${u.email}', '${u.name}')" class="bg-green-600/20 text-green-500 px-4 py-2 rounded-xl text-[9px] font-bold">APPROVE</button>
-                                    <button onclick="processApp('${child.key}', 'Rejected')" class="bg-red-600/20 text-red-500 px-4 py-2 rounded-xl text-[9px] font-bold">REJECT</button>
+                                    <button onclick="approve('${child.key}')" class="bg-green-500 text-black px-4 py-1 rounded-lg text-[10px] font-bold">Approve</button>
+                                    <button onclick="reject('${child.key}')" class="bg-red-500 text-black px-4 py-1 rounded-lg text-[10px] font-bold">Reject</button>
                                 </div>
                             </div>
                         `;
-                    } else { activeCount++; }
-                });
-                document.getElementById('stat-resellers').innerText = activeCount;
-                document.getElementById('notif-pill').innerText = `${pendingCount} NEW`;
-                document.getElementById('admin-pending-count').innerText = pendingCount;
-            });
-            
-            // Load Analytics Stats
-            fs.collection('analytics').get().then(snap => {
-                let totalViews = 0;
-                snap.forEach(doc => totalViews += doc.data().views);
-                document.getElementById('stat-views').innerText = totalViews;
-            });
-        }
-
-        async function processApp(uid, status, email, name) {
-            await db.ref('users/' + uid).update({ status: status });
-            if(status === 'Approved') {
-                updateLog(`Approved Reseller: ${email}`);
-                // AUTO EMAIL (EMAILJS)
-                emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-                    to_name: name,
-                    to_email: email,
-                    message: "Welcome to Bryluno! Your dashboard is now active. Use your registered credentials to login."
-                }).then(() => alert("Reseller Notified via Email!"));
-            }
-        }
-
-        // -- ANALYTICS CHART --
-        function updateChart() {
-            const ctx = document.getElementById('analyticsChart').getContext('2d');
-            const labels = Object.keys(productViews);
-            const data = Object.values(productViews);
-
-            if(myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Interactions',
-                        data: data,
-                        backgroundColor: '#d4af37',
-                        borderRadius: 10
-                    }]
-                },
-                options: {
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { display: false },
-                        x: { ticks: { color: 'rgba(255,255,255,0.3)', font: { size: 8 } } }
                     }
-                }
+                });
+                document.getElementById('stat-res').innerText = count;
             });
         }
 
-        function updateLog(msg, type = "info") {
-            const logs = document.getElementById('logs');
-            const time = new Date().toLocaleTimeString();
-            logs.innerHTML = `<p class="${type === 'err' ? 'text-red-500' : ''}">> [${time}] ${msg}</p>` + logs.innerHTML;
+        function approve(key) {
+            db.ref('applications/' + key).update({ status: 'Approved' }).then(() => alert("Reseller Approved!"));
+        }
+        function reject(key) {
+            db.ref('applications/' + key).remove().then(() => alert("Request Deleted."));
         }
 
-        function sendBroadcast() {
-            const msg = document.getElementById('broadcast-msg').value;
-            if(!msg) return;
-            db.ref('broadcast').set({ message: msg, date: Date.now() });
-            alert("Broadcast sent to all Partner Dashboards!");
-            document.getElementById('broadcast-msg').value = '';
-        }
-
-        // -- INIT --
-        window.onload = () => {
-            loadInventory();
-            updateLog("System v2.0 Initialization Complete");
-        };
     </script>
 </body>
-</html>
+    </html>
