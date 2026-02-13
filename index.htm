@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRYLUNO | Ultimate Enterprise OS v5.0</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@700&display=swap');
+        
+        :root { --gold: #c5a059; --dark: #020202; --card: rgba(255,255,255,0.03); }
+        body { background: var(--dark); color: #fff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+        .gold-text { background: linear-gradient(45deg, #c5a059, #fff, #c5a059); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass { background: var(--card); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.08); }
+        .page { display: none; animation: pageIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .page.active { display: block; }
+        @keyframes pageIn { from { opacity: 0; transform: translateY(30px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        
+        /* Premium Components */
+        .tier-card { border-radius: 40px; transition: 0.5s; position: relative; overflow: hidden; }
+        .tier-card:hover { transform: translateY(-15px); border-color: var(--gold); box-shadow: 0 20px 40px rgba(197, 160, 89, 0.15); }
+        .input-dark { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 16px; border-radius: 20px; color: white; outline: none; transition: 0.3s; }
+        .input-dark:focus { border-color: var(--gold); background: rgba(255,255,255,0.08); }
+        .btn-gold { background: linear-gradient(45deg, #c5a059, #b08d4a); color: #000; font-weight: 800; border-radius: 20px; transition: 0.3s; cursor: pointer; }
+        .btn-gold:hover { transform: scale(1.02); filter: brightness(1.1); }
+        
+        /* Dock UI */
+        .dock { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; }
+        .nav-icon { font-size: 1.4rem; color: rgba(255,255,255,0.3); transition: 0.4s; }
+        .nav-icon.active { color: var(--gold); transform: scale(1.3); }
+
+        /* Status Badges */
+        .status-pill { padding: 4px 12px; rounded: 50px; font-size: 10px; font-weight: 900; text-transform: uppercase; }
+        .status-pending { background: rgba(255, 187, 0, 0.1); color: #ffbb00; }
+        .status-approved { background: rgba(0, 255, 136, 0.1); color: #00ff88; }
+    </style>
+</head>
+<body>
+
+    <header class="fixed top-0 w-full z-[1000] glass border-b border-white/5 px-8 py-5 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-black font-black text-xs">B</div>
+            <h1 class="sync-font text-xl gold-text font-black tracking-tighter">BRYLUNO</h1>
+        </div>
+        <div class="flex items-center gap-6">
+            <div id="broadcast-ticker" class="text-[9px] uppercase tracking-[4px] text-white/30 hidden md:block italic animate-pulse">Establishing Secure Connection...</div>
+            <button onclick="accessAdmin()" class="w-10 h-10 rounded-full glass flex items-center justify-center text-amber-500 hover:rotate-180 transition-all duration-700">
+                <i class="fa-solid fa-shield-halved"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="pt-28 pb-32">
+        
+        <section id="home" class="page active px-6 max-w-7xl mx-auto">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-4xl font-black gold-text italic">SIGNATURE DROP</h2>
+                    <p class="text-[10px] tracking-[8px] text-white/30 uppercase mt-2">Live Inventory Tracking</p>
+                </div>
+                <div class="text-right glass p-4 rounded-3xl">
+                    <p class="text-[8px] text-amber-500 font-black uppercase">Market Value</p>
+                    <p id="total-inventory-val" class="text-xl font-bold font-mono tracking-tighter">LKR 0.00</p>
+                </div>
+            </div>
+            
+            <div id="product-hub" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <div class="col-span-full py-20 text-center opacity-10 animate-pulse sync-font">Syncing Database...</div>
+            </div>
+        </section>
+
+        <section id="partners" class="page px-6 max-w-5xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="glass p-8 rounded-[40px]">
+                        <h3 class="sync-font text-sm gold-text mb-6">RESELLER POLICY</h3>
+                        <div class="space-y-4 text-[11px] text-white/40 font-medium uppercase tracking-widest">
+                            <p><span class="text-amber-500 mr-2">/</span> Fee: Rs. 500 (6 Months)</p>
+                            <p><span class="text-amber-500 mr-2">/</span> 100% Advance Payment</p>
+                            <p><span class="text-amber-500 mr-2">/</span> Weekly Sunday Payouts</p>
+                            <p><span class="text-amber-500 mr-2">/</span> Minimum 3 Orders/Month</p>
+                        </div>
+                    </div>
+                    <div class="glass p-8 rounded-[40px] bg-amber-500/5 border-amber-500/20">
+                        <h3 class="text-sm font-black text-amber-500 mb-2">COMMISSION CHART</h3>
+                        <div class="flex justify-between text-xs py-2 border-b border-white/5"><span>Basic Pack</span> <span class="font-bold">Rs. 800</span></div>
+                        <div class="flex justify-between text-xs py-2 border-b border-white/5"><span>Premium Pack</span> <span class="font-bold">Rs. 1,000</span></div>
+                        <div class="flex justify-between text-xs py-2"><span>Luxury Pack</span> <span class="font-bold">Rs. 1,500</span></div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-3 glass p-10 rounded-[50px]">
+                    <h3 class="sync-font text-lg mb-8">Onboarding Form</h3>
+                    <form onsubmit="resellerSignup(event)" class="space-y-5">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="join-name" placeholder="Full Name" class="input-dark" required>
+                            <input type="text" id="join-wa" placeholder="WhatsApp Number" class="input-dark" required>
+                        </div>
+                        <input type="email" id="join-email" placeholder="Gmail Address" class="input-dark" required>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="password" id="join-pass" placeholder="Create Password" class="input-dark" required>
+                            <input type="text" id="join-district" placeholder="District" class="input-dark" required>
+                        </div>
+                        <input type="text" id="join-ss" placeholder="Reg Fee Screenshot Link (ImgBB/Drive)" class="input-dark" required>
+                        <textarea id="join-why" placeholder="Why do you want to join Bryluno?" class="input-dark h-28"></textarea>
+                        <button type="submit" class="w-full btn-gold py-5 uppercase text-[10px] tracking-[5px]">Initialize Account</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="admin" class="page px-6 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                <div class="glass p-6 rounded-3xl">
+                    <p class="text-[9px] text-white/30 uppercase font-black mb-1">Queue</p>
+                    <h4 id="admin-pending-num" class="text-3xl font-bold text-amber-500">0</h4>
+                </div>
+                <div class="glass p-6 rounded-3xl">
+                    <p class="text-[9px] text-white/30 uppercase font-black mb-1">Resellers</p>
+                    <h4 id="admin-total-res" class="text-3xl font-bold">0</h4>
+                </div>
+                <div class="glass p-6 rounded-3xl">
+                    <p class="text-[9px] text-white/30 uppercase font-black mb-1">Total Commission Paid</p>
+                    <h4 class="text-3xl font-bold text-green-500 font-mono italic">LKR 0</h4>
+                </div>
+                <button onclick="location.reload()" class="glass p-6 rounded-3xl border-red-500/20 text-red-500 font-black text-[10px] uppercase">Logout Securely</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 glass p-8 rounded-[40px]">
+                    <h4 class="sync-font text-xs gold-text mb-8 italic underline">Pending Partner Approvals</h4>
+                    <div id="admin-request-queue" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                        </div>
+                </div>
+                <div class="space-y-6">
+                    <div class="glass p-8 rounded-[40px]">
+                        <h4 class="sync-font text-[10px] mb-6 uppercase">System Broadcast</h4>
+                        <textarea id="bc-msg" class="input-dark text-xs h-24 mb-4" placeholder="Enter message to all partners..."></textarea>
+                        <button onclick="postBroadcast()" class="w-full py-4 bg-white text-black font-black uppercase text-[9px] rounded-xl">Push to OS</button>
+                    </div>
+                    <div class="glass p-8 rounded-[40px]">
+                        <h4 class="sync-font text-[10px] mb-6 uppercase">Engagement Analytics</h4>
+                        <canvas id="admin-chart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reseller-db" class="page px-6">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="glass p-12 rounded-[50px] border-amber-500/30 relative">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-amber-500 text-[10px] font-black uppercase tracking-[5px] mb-2">Verified Partner</p>
+                            <h2 id="user-display-name" class="text-4xl font-black gold-text italic">...</h2>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-white/30 text-[9px] uppercase">Current Earnings</p>
+                            <h3 id="user-wallet" class="text-3xl font-mono font-bold tracking-tighter">LKR 0.00</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="glass p-8 rounded-[40px]">
+                        <h4 class="sync-font text-[10px] mb-6">Marketing Toolbox</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button class="bg-white/5 p-6 rounded-3xl border border-dashed border-white/10 hover:border-amber-500 transition">
+                                <i class="fa-solid fa-cloud-arrow-down text-xl mb-2"></i>
+                                <p class="text-[9px] font-bold uppercase">Price List</p>
+                            </button>
+                            <button class="bg-white/5 p-6 rounded-3xl border border-dashed border-white/10 hover:border-amber-500 transition">
+                                <i class="fa-solid fa-photo-film text-xl mb-2"></i>
+                                <p class="text-[9px] font-bold uppercase">Media Kit</p>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="glass p-8 rounded-[40px]">
+                        <h4 class="sync-font text-[10px] mb-6">Active Notifications</h4>
+                        <div id="reseller-news" class="text-xs text-amber-500 italic bg-amber-500/5 p-4 rounded-2xl border border-amber-500/10">
+                            No active announcements.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="fixed bottom-10 left-1/2 -translate-x-1/2 dock px-10 py-5 flex gap-12 items-center z-[2000] shadow-2xl">
+        <button onclick="navTo('home')" class="nav-icon active"><i class="fa-solid fa-house-chimney"></i></button>
+        <button onclick="navTo('partners')" class="nav-icon"><i class="fa-solid fa-briefcase"></i></button>
+        <button onclick="accessAdmin()" class="nav-icon"><i class="fa-solid fa-fingerprint"></i></button>
+    </div>
+
+    <script>
+        // CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyAoYDclGhL75b14C1fT_5SRsrrEt8B6iyU",
+            authDomain: "bryluno-system.firebaseapp.com",
+            databaseURL: "https://bryluno-system-default-rtdb.firebaseio.com",
+            projectId: "bryluno-system",
+            storageBucket: "bryluno-system.firebasestorage.app",
+            messagingSenderId: "666741527124",
+            appId: "1:666741527124:web:bebf8a61c085eba11cd3c1"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+        const fs = firebase.firestore();
+
+        const SHEET_ID = "1BQ819L1qmuatSTgwjXMAR0K-tNQcIIanow7EdthO6Sg";
+        const MASTER_EMAIL = "bryluno.pvt.ltd@gmail.com";
+        const WHATSAPP = "94752351754";
+
+        // NAVIGATION
+        function navTo(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            // Icon effect
+            document.querySelectorAll('.nav-icon').forEach(icon => icon.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        // GOOGLE SHEET SYNC (Inventory)
+        async function syncInventory() {
+            const hub = document.getElementById('product-hub');
+            try {
+                const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
+                const text = await res.text();
+                const json = JSON.parse(text.substr(47).slice(0, -2));
+                const rows = json.table.rows;
+                
+                hub.innerHTML = '';
+                let totalV = 0;
+
+                rows.forEach((row, i) => {
+                    const name = row.c[0]?.v || "Bryluno Piece";
+                    const price = row.c[1]?.v || 0;
+                    const img = row.c[2]?.v || "";
+                    const tier = row.c[3]?.v || "Premium";
+                    totalV += Number(price);
+
+                    hub.innerHTML += `
+                        <div class="tier-card glass p-7 border-white/5 group">
+                            <div class="h-80 rounded-[30px] overflow-hidden mb-6 relative">
+                                <img src="${img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000" onerror="this.src='https://via.placeholder.com/400x500/111/fff?text=BRYLUNO'">
+                                <div class="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[8px] font-black tracking-widest uppercase border border-white/10">${tier}</div>
+                            </div>
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <h3 class="text-lg font-bold gold-text uppercase italic">${name}</h3>
+                                    <p class="text-[10px] text-white/30 tracking-widest mt-1">LKR ${Number(price).toLocaleString()}</p>
+                                </div>
+                                <button onclick="reserveItem('${name}', '${price}')" class="btn-gold px-6 py-3 text-[9px] uppercase tracking-widest">Reserve</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                document.getElementById('total-inventory-val').innerText = `LKR ${totalV.toLocaleString()}`;
+            } catch (e) { hub.innerHTML = "Sync Error."; }
+        }
+
+        function reserveItem(n, p) {
+            const msg = `BRYLUNO RESERVATION%0A-----------------%0AItem: ${n}%0APrice: LKR ${p}%0AStatus: Pending Payment`;
+            window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank');
+        }
+
+        // ONBOARDING
+        async function resellerSignup(e) {
+            e.preventDefault();
+            const d = {
+                name: document.getElementById('join-name').value,
+                wa: document.getElementById('join-wa').value,
+                email: document.getElementById('join-email').value,
+                pass: document.getElementById('join-pass').value,
+                district: document.getElementById('join-district').value,
+                ss: document.getElementById('join-ss').value,
+                why: document.getElementById('join-why').value,
+                status: 'Pending',
+                wallet: 0,
+                joined: new Date().toISOString()
+            };
+
+            try {
+                const c = await auth.createUserWithEmailAndPassword(d.email, d.pass);
+                await db.ref('resellers/' + c.user.uid).set(d);
+                alert("REGISTRATION SUCCESS! Admin will verify your Rs.500 payment within 24 hours.");
+                navTo('home');
+            } catch (err) { alert(err.message); }
+        }
+
+        // ADMIN ACCESS
+        async function accessAdmin() {
+            const e = prompt("Identify Yourself:");
+            if(!e) return;
+            const p = prompt("Security Key:");
+            
+            try {
+                const cred = await auth.signInWithEmailAndPassword(e, p);
+                if(e === MASTER_EMAIL) {
+                    navTo('admin');
+                    loadMasterData();
+                } else {
+                    db.ref('resellers/' + cred.user.uid).once('value', s => {
+                        const u = s.val();
+                        if(u && u.status === 'Approved') {
+                            document.getElementById('user-display-name').innerText = u.name;
+                            document.getElementById('user-wallet').innerText = `LKR ${u.wallet || '0.00'}`;
+                            navTo('reseller-db');
+                            loadBroadcast();
+                        } else {
+                            alert("ACCOUNT STATUS: PENDING APPROVAL");
+                            auth.signOut();
+                        }
+                    });
+                }
+            } catch (err) { alert("ACCESS DENIED."); }
+        }
+
+        function loadMasterData() {
+            db.ref('resellers').on('value', s => {
+                const q = document.getElementById('admin-request-queue');
+                q.innerHTML = '';
+                let pCount = 0; let tCount = 0;
+                s.forEach(child => {
+                    const u = child.val(); tCount++;
+                    if(u.status === 'Pending') {
+                        pCount++;
+                        q.innerHTML += `
+                            <div class="glass p-6 rounded-3xl border-l-4 border-amber-500">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h5 class="font-bold gold-text uppercase text-sm">${u.name}</h5>
+                                        <p class="text-[9px] text-white/30 uppercase tracking-widest">${u.district} | ${u.wa}</p>
+                                    </div>
+                                    <a href="${u.ss}" target="_blank" class="bg-white/10 px-3 py-1 rounded-full text-[8px] font-black hover:bg-white hover:text-black">VIEW SS</a>
+                                </div>
+                                <p class="text-[10px] text-white/40 mb-6 italic leading-relaxed">"${u.why}"</p>
+                                <div class="flex gap-3">
+                                    <button onclick="approveUser('${child.key}')" class="bg-green-500 text-black px-6 py-2 rounded-xl text-[9px] font-black uppercase">Approve</button>
+                                    <button onclick="rejectUser('${child.key}')" class="bg-red-500/20 text-red-500 px-6 py-2 rounded-xl text-[9px] font-black uppercase">Reject</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                document.getElementById('admin-pending-num').innerText = pCount;
+                document.getElementById('admin-total-res').innerText = tCount;
+            });
+            initAdminChart();
+        }
+
+        function approveUser(id) { db.ref('resellers/' + id).update({status: 'Approved'}); }
+        function rejectUser(id) { db.ref('resellers/' + id).remove(); }
+
+        function postBroadcast() {
+            const m = document.getElementById('bc-msg').value;
+            if(!m) return;
+            db.ref('broadcast').set({ msg: m, time: Date.now() });
+            alert("Broadcast Active!");
+        }
+
+        function loadBroadcast() {
+            db.ref('broadcast').on('value', s => {
+                if(s.exists()) {
+                    document.getElementById('reseller-news').innerText = s.val().msg;
+                    document.getElementById('broadcast-ticker').innerText = "ALERT: " + s.val().msg;
+                }
+            });
+        }
+
+        function initAdminChart() {
+            const ctx = document.getElementById('admin-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+                    datasets: [{ label: 'Growth', data: [5, 12, 8, 20], borderColor: '#c5a059', tension: 0.4 }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { display: false } } }
+            });
+        }
+
+        window.onload = syncInventory;
+    </script>
+</body>
+</html>
