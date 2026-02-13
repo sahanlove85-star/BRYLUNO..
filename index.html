@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRYLUNO | Luxury Business Intelligence OS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@200;400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #c5a059; --dark: #050505; --glass: rgba(255, 255, 255, 0.03); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark); color: white; overflow-x: hidden; }
+        .brand-font { font-family: 'Cinzel', serif; }
+        .glass-layer { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.08); }
+        .gold-text { background: linear-gradient(to right, #c5a059, #fff, #c5a059); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .page-transition { animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <nav class="fixed top-0 w-full z-[100] glass-layer px-8 py-5 flex justify-between items-center">
+        <div class="brand-font text-2xl font-bold tracking-[5px] gold-text">BRYLUNO</div>
+        <div class="hidden md:flex items-center space-x-10 text-[10px] font-bold uppercase tracking-[3px]">
+            <button onclick="navigate('home')" class="hover:text-amber-500">Collection</button>
+            <button onclick="navigate('partners')" class="hover:text-amber-500">Partners</button>
+            <button onclick="authAdmin()" class="bg-amber-600 text-black px-5 py-2 rounded-full font-black">Admin Access</button>
+        </div>
+    </nav>
+
+    <main id="view-port" class="pt-24 min-h-screen">
+        
+        <div id="page-home" class="page-transition px-8 md:px-24">
+            <section class="py-10 text-center">
+                <p class="brand-font text-amber-500 tracking-[10px] text-[10px] mb-4 uppercase">Lifestyle Intelligence</p>
+                <h1 class="brand-font text-4xl md:text-7xl font-black mb-12 gold-text">The Signature<br>Series</h1>
+            </section>
+            <div id="product-list" class="grid grid-cols-1 md:grid-cols-3 gap-10 pb-32">
+                </div>
+        </div>
+
+        <div id="page-partners" class="hidden page-transition px-8 md:px-24 py-10">
+            <div class="text-center glass-layer p-12 rounded-[50px] border-amber-600/30">
+                <h2 class="brand-font text-4xl gold-text mb-6">Partner Ecosystem</h2>
+                <p class="text-white/50 mb-10 tracking-widest text-xs uppercase font-bold">Join the global Bryluno network</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+                    <div class="bg-white/5 p-8 rounded-3xl border border-white/10">
+                        <i class="fa-solid fa-chart-line text-amber-500 text-3xl mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">15% Commission</h4>
+                        <p class="text-white/40 text-sm">Earn on every sale made through your unique reseller ID.</p>
+                    </div>
+                    <div class="bg-white/5 p-8 rounded-3xl border border-white/10">
+                        <i class="fa-solid fa-layer-group text-amber-500 text-3xl mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Inventory Access</h4>
+                        <p class="text-white/40 text-sm">Direct real-time access to stock levels and marketing assets.</p>
+                    </div>
+                </div>
+                <button class="mt-12 bg-white text-black px-12 py-4 rounded-full font-black text-xs tracking-widest uppercase hover:bg-amber-600 transition">Register Now</button>
+            </div>
+        </div>
+
+        <div id="page-admin" class="hidden page-transition px-8 md:px-24 py-10">
+            <div class="flex justify-between items-center mb-16">
+                <div>
+                    <h2 class="brand-font text-4xl font-bold gold-text">Executive Hub</h2>
+                    <p class="text-white/40 text-[10px] font-bold tracking-widest mt-2 uppercase">Real-Time Sheet Intelligence</p>
+                </div>
+                <button onclick="navigate('home')" class="bg-red-500/20 text-red-500 border border-red-500/50 px-6 py-2 rounded-full text-[10px] font-black uppercase">Exit Console</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="glass-layer p-10 rounded-[40px]">
+                    <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest">Total Asset Value</p>
+                    <h4 id="admin-revenue" class="text-5xl font-black mt-4 gold-text">LKR 0.00</h4>
+                </div>
+                <div class="glass-layer p-10 rounded-[40px]">
+                    <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest">Growth Velocity</p>
+                    <h4 class="text-5xl font-black mt-4">+18.4%</h4>
+                </div>
+            </div>
+            <div class="glass-layer p-10 rounded-[50px] h-[400px]">
+                <canvas id="bizChart"></canvas>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 glass-layer px-12 py-5 rounded-full flex gap-16 shadow-2xl z-[200] border-white/20">
+        <button onclick="navigate('home')" class="nav-icon text-white/40 hover:text-amber-500 transition"><i class="fa-solid fa-house-chimney text-xl"></i></button>
+        <button onclick="navigate('partners')" class="nav-icon text-white/40 hover:text-amber-500 transition"><i class="fa-solid fa-users text-xl"></i></button>
+        <button onclick="authAdmin()" class="nav-icon text-white/40 hover:text-amber-500 transition"><i class="fa-solid fa-fingerprint text-xl"></i></button>
+    </div>
+
+    <script>
+        const SHEET_LINK = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRukBm2FbNlYSrOopGqy0oh2PrXiIfuL3vNey5L4QC8MMqSCBNFvh6pJQFFFAIF3USo5bu_UtPefR7_/pub?output=csv';
+        let storeData = [];
+
+        async function initializeSystem() {
+            try {
+                const response = await fetch(SHEET_LINK);
+                const csv = await response.text();
+                storeData = csv.split('\n').slice(1).map(row => row.split(','));
+                
+                renderStore();
+                syncAdminStats();
+            } catch (err) { console.error("System Sync Error", err); }
+        }
+
+        function renderStore() {
+            let html = '';
+            storeData.forEach(item => {
+                if(item.length < 2) return;
+                html += `
+                    <div class="glass-layer rounded-[45px] overflow-hidden group hover:scale-[1.02] transition-all duration-500">
+                        <div class="h-80 relative overflow-hidden">
+                            <img src="${item[4]}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                            <div class="absolute bottom-6 left-8">
+                                <p class="text-amber-500 text-[9px] font-black tracking-[3px] uppercase mb-1">${item[5] || 'Luxury Collection'}</p>
+                                <h3 class="text-2xl font-bold brand-font text-white">${item[1]}</h3>
+                            </div>
+                        </div>
+                        <div class="p-8 flex justify-between items-center bg-white/5">
+                            <div>
+                                <span class="text-[10px] text-white/40 font-bold uppercase block mb-1 tracking-widest">Investment</span>
+                                <span class="text-2xl font-black gold-text italic tracking-tighter">LKR ${Number(item[2]).toLocaleString()}</span>
+                            </div>
+                            <a href="https://wa.me/94752351754?text=ORDER_ENQUIRY:${item[1]}" class="bg-amber-600 text-black px-8 py-4 rounded-3xl font-black text-[10px] uppercase tracking-widest hover:bg-white transition">Reserve</a>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('product-list').innerHTML = html;
+        }
+
+        function syncAdminStats() {
+            let total = storeData.reduce((acc, row) => acc + (Number(row[2]) || 0), 0);
+            document.getElementById('admin-revenue').innerText = `LKR ${total.toLocaleString()}`;
+        }
+
+        function navigate(pageId) {
+            document.querySelectorAll('.page-transition').forEach(p => p.classList.add('hidden'));
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+            if(pageId === 'admin') initChart();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function authAdmin() {
+            if(prompt("EXECUTIVE KEY REQUIRED:") === "1234") navigate('admin');
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('bizChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        data: [50000, 150000, 90000, 280000, 210000, 420000],
+                        borderColor: '#c5a059',
+                        borderWidth: 4,
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(197, 160, 89, 0.05)',
+                        pointRadius: 0
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } },
+                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.2)' } } }
+                }
+            });
+        }
+
+        window.onload = initializeSystem;
+    </script>
+</body>
+</html>
