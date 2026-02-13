@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRYLUNO | Premium Gifts & Reseller Hub</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }
+        
+        /* Kapruka Style Header */
+        .kap-purple { background-color: #512da8; }
+        .kap-yellow { background-color: #ffca28; }
+        
+        /* UI Components */
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .product-card { background: white; border-radius: 12px; transition: 0.3s; border: 1px solid #e5e7eb; overflow: hidden; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        
+        /* Tab Bar */
+        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: #1f2937; border-radius: 50px; display: flex; justify-content: space-around; padding: 15px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .nav-item { color: #9ca3af; font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: #ffca28; }
+
+        .badge-offer { position: absolute; top: 10px; right: 10px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <header class="kap-purple text-white sticky top-0 z-[500]">
+        <div class="px-4 py-3 flex justify-between items-center max-w-7xl mx-auto">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-bars text-xl"></i>
+                <h1 class="text-2xl font-black tracking-tighter">BRYLUNO</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <i onclick="adminLogin()" class="fa-solid fa-circle-user text-xl cursor-pointer"></i>
+            </div>
+        </div>
+        <div class="px-4 pb-4">
+            <div class="bg-white rounded-md flex items-center px-3 py-2 max-w-3xl mx-auto">
+                <input type="text" placeholder="Type here..." class="w-full text-gray-800 outline-none text-sm">
+                <button class="kap-yellow p-2 rounded-md text-gray-800"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto pb-32">
+        
+        <section id="home" class="page active px-4 pt-6">
+            <div class="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar py-2 text-xs font-bold uppercase whitespace-nowrap">
+                <span class="bg-white border px-4 py-2 rounded-full shadow-sm">All Gifts</span>
+                <span class="bg-white border px-4 py-2 rounded-full shadow-sm">Cakes</span>
+                <span class="bg-white border px-4 py-2 rounded-full shadow-sm">Flowers</span>
+                <span class="bg-white border px-4 py-2 rounded-full shadow-sm">Chocolates</span>
+            </div>
+
+            <div id="product-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="col-span-full py-20 text-center text-gray-400 italic">Syncing Kapruka Style Inventory...</div>
+            </div>
+        </section>
+
+        <section id="partners" class="page px-4 pt-10">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border max-w-2xl mx-auto text-center">
+                <h2 class="text-2xl font-bold mb-4">Partner with Bryluno</h2>
+                <p class="text-gray-500 text-sm mb-8">Join the largest reseller network in Sri Lanka.</p>
+                <form onsubmit="handleSignup(event)" class="space-y-4 text-left">
+                    <input type="text" id="reg-name" placeholder="Full Name" class="w-full p-4 border rounded-xl outline-none focus:ring-2 ring-purple-500" required>
+                    <input type="email" id="reg-email" placeholder="Email Address" class="w-full p-4 border rounded-xl outline-none" required>
+                    <input type="password" id="reg-pass" placeholder="Password" class="w-full p-4 border rounded-xl outline-none" required>
+                    <button class="w-full kap-purple text-white py-4 rounded-xl font-bold">CREATE ACCOUNT</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="console" class="page px-4 pt-10">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-bold text-xl uppercase tracking-tighter">Reseller Console</h3>
+                    <button onclick="location.reload()" class="text-red-500 text-xs font-bold">LOGOUT</button>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-2xl border">
+                        <p class="text-[10px] uppercase font-bold text-gray-400">Current Earnings</p>
+                        <p class="text-2xl font-black">LKR 0.00</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-2xl border">
+                        <p class="text-[10px] uppercase font-bold text-gray-400">Total Orders</p>
+                        <p class="text-2xl font-black">0</p>
+                    </div>
+                </div>
+                <div class="border-t pt-6">
+                    <p class="text-xs font-bold text-gray-400 uppercase mb-4 italic">Important Announcements</p>
+                    <div id="announcement" class="bg-amber-50 p-4 rounded-xl text-amber-800 text-sm">
+                        Welcome to the new Bryluno Dashboard.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <nav class="bottom-nav">
+        <div onclick="showPage('home')" class="nav-item active"><i class="fa-solid fa-house"></i></div>
+        <div onclick="showPage('partners')" class="nav-item"><i class="fa-solid fa-users"></i></div>
+        <div onclick="showPage('console')" class="nav-item"><i class="fa-solid fa-chart-pie"></i></div>
+        <div onclick="adminLogin()" class="nav-item"><i class="fa-solid fa-shield-halved"></i></div>
+    </nav>
+
+    <script>
+        // CONFIG (Your real Firebase data)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAoYDclGhL75b14C1fT_5SRsrrEt8B6iyU",
+            authDomain: "bryluno-system.firebaseapp.com",
+            databaseURL: "https://bryluno-system-default-rtdb.firebaseio.com",
+            projectId: "bryluno-system",
+            storageBucket: "bryluno-system.firebasestorage.app",
+            messagingSenderId: "666741527124",
+            appId: "1:666741527124:web:bebf8a61c085eba11cd3c1"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        // UI NAVIGATION
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // LOAD SHEET DATA (KAPRUKA CARDS)
+        async function fetchProducts() {
+            const SHEET_ID = "1BQ819L1qmuatSTgwjXMAR0K-tNQcIIanow7EdthO6Sg";
+            const grid = document.getElementById('product-list');
+            try {
+                const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
+                const text = await res.text();
+                const json = JSON.parse(text.substr(47).slice(0, -2));
+                const rows = json.table.rows;
+                
+                grid.innerHTML = '';
+                rows.forEach(row => {
+                    const name = row.c[0]?.v || "Product";
+                    const price = row.c[1]?.v || 0;
+                    const img = row.c[2]?.v || "";
+                    const discount = "10% off"; // Logic can be added
+
+                    grid.innerHTML += `
+                        <div class="product-card">
+                            <div class="relative h-48 bg-gray-100">
+                                <img src="${img}" class="w-full h-full object-cover">
+                                <span class="badge-offer">${discount}</span>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="text-[13px] text-gray-600 font-medium h-10 overflow-hidden leading-tight mb-2">${name}</h3>
+                                <p class="text-purple-900 font-bold">RS. ${Number(price).toLocaleString()}</p>
+                                <button onclick="reserve('${name}')" class="w-full mt-3 border border-purple-800 text-purple-800 py-2 rounded-md text-[10px] font-bold hover:bg-purple-800 hover:text-white transition">RESERVE PIECE</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) { grid.innerHTML = "Sheet Sync Error!"; }
+        }
+
+        function reserve(name) {
+            window.open(`https://wa.me/94752351754?text=I want to reserve: ${name}`, '_blank');
+        }
+
+        async function adminLogin() {
+            const e = prompt("Admin Email:");
+            const p = prompt("Security Key:");
+            try {
+                await auth.signInWithEmailAndPassword(e, p);
+                showPage('console');
+            } catch (err) { alert("Invalid Credentials"); }
+        }
+
+        window.onload = fetchProducts;
+    </script>
+</body>
+</html>
