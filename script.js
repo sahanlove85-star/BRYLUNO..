@@ -48,7 +48,7 @@ async function loadInventory() {
 
 // 3. Reserve via WhatsApp
 function reserveViaWA(itemName) {
-    const phone = "947XXXXXXXX"; // உங்கள் வாட்ஸ்அப் நம்பரை இங்கே போடவும் (947 ஆரம்பிக்க வேண்டும்)
+    const phone = "+94752351754"; // உங்கள் வாட்ஸ்அப் நம்பரை இங்கே போடவும் (947 ஆரம்பிக்க வேண்டும்)
     const msg = `Hello Bryluno, I would like to reserve: ${itemName}`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
