@@ -1,0 +1,48 @@
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+:root {
+    --primary: #512da8;
+    --secondary: #ffca28;
+    --dark: #0f172a;
+    --light: #f8fafc;
+    --accent: #ef4444;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--light);
+    margin: 0;
+}
+
+/* Kapruka Style Cards */
+.product-card {
+    background: white;
+    border-radius: 15px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Admin Specific UI */
+.admin-sidebar {
+    background: var(--dark);
+    color: white;
+    height: 100vh;
+    padding: 20px;
+}
+
+/* Button Styles */
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
