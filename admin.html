@@ -2,48 +2,132 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>BRYLUNO | Owner Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRYLUNO | Master Owner Console</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+        .admin-sidebar { background: #1e1b4b; height: 100vh; position: fixed; width: 260px; color: white; }
+        .main-content { margin-left: 260px; padding: 40px; }
+        .glass-card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
+        input, select { border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #4f46e5; ring: 2px #4f46e5; }
+        @media (max-width: 768px) {
+            .admin-sidebar { display: none; }
+            .main-content { margin-left: 0; padding: 20px; }
+        }
+    </style>
 </head>
 <body>
-    <div class="dash-sidebar">
-        <h1 class="text-2xl font-black italic mb-10 text-gold">BRYLUNO ADMIN</h1>
-        <nav class="space-y-4">
-            <p onclick="showTab('products')" class="cursor-pointer hover:text-gold font-bold">Manage Packs</p>
-            <p onclick="showTab('orders')" class="cursor-pointer hover:text-gold font-bold">Orders Review</p>
-            <p onclick="showTab('resellers')" class="cursor-pointer hover:text-gold font-bold">Reseller Network</p>
-            <p onclick="showTab('content')" class="cursor-pointer hover:text-gold font-bold">Site Content</p>
-        </nav>
-    </div>
 
-    <div class="dash-content">
-        <section id="products-tab">
-            <h2 class="text-2xl font-bold mb-6">Deploy New Gift Pack</h2>
-            <div class="grid grid-cols-2 gap-4 bg-white p-6 rounded-xl border">
-                <input type="text" id="p-name" placeholder="Pack Name" class="p-3 border rounded-lg">
-                <input type="number" id="p-price" placeholder="Sale Price (LKR)" class="p-3 border rounded-lg">
-                <input type="number" id="p-comm" placeholder="Reseller Commission (LKR)" class="p-3 border rounded-lg">
-                <input type="number" id="p-del" placeholder="Delivery Charge (LKR)" class="p-3 border rounded-lg">
-                <input type="file" id="p-img" class="col-span-2 p-2 border border-dashed">
-                <button onclick="addGiftPack()" class="col-span-2 bg-purple-900 text-white py-4 rounded-lg font-bold uppercase tracking-widest">Publish Globally</button>
+    <div class="admin-sidebar p-6 shadow-2xl">
+        <h1 class="text-2xl font-black italic text-yellow-400 mb-10">BRYLUNO MASTER</h1>
+        <nav class="space-y-6">
+            <div class="flex items-center gap-4 text-gray-300 hover:text-white cursor-pointer transition">
+                <i class="fa-solid fa-plus-circle"></i> <span>Add Gift Pack</span>
             </div>
-        </section>
-
-        <section id="orders-tab" class="mt-10">
-            <h2 class="text-2xl font-bold mb-6">Network Orders</h2>
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Order ID</th><th>Reseller</th><th>Customer</th><th>Status</th><th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-order-list"></tbody>
-            </table>
-        </section>
+            <div class="flex items-center gap-4 text-gray-300 hover:text-white cursor-pointer transition">
+                <i class="fa-solid fa-list-check"></i> <span>Manage Orders</span>
+            </div>
+            <div class="flex items-center gap-4 text-gray-300 hover:text-white cursor-pointer transition">
+                <i class="fa-solid fa-users-gear"></i> <span>Reseller Network</span>
+            </div>
+            <div class="flex items-center gap-4 text-gray-300 hover:text-white cursor-pointer transition">
+                <i class="fa-solid fa-gears"></i> <span>Site Settings</span>
+            </div>
+        </nav>
+        <div class="absolute bottom-10 left-6">
+            <button onclick="location.href='index.html'" class="text-xs bg-white/10 px-4 py-2 rounded-full hover:bg-white/20 transition">View Live Store</button>
+        </div>
     </div>
+
+    <div class="main-content">
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <h2 class="text-3xl font-black text-indigo-950 tracking-tight">System Control</h2>
+                <p class="text-gray-500 font-medium">Manage your Bryluno empire from here.</p>
+            </div>
+            <div class="bg-indigo-900 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-indigo-200">
+                Owner Status: Active
+            </div>
+        </header>
+
+        <div class="glass-card p-8">
+            <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-indigo-900">
+                <i class="fa-solid fa-rocket"></i> Deploy New Gift Pack
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-gray-600">Pack Name</label>
+                    <input type="text" id="admin-p-name" placeholder="e.g. Birthday Luxury Combo" class="w-full">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-gray-600">Sale Price (LKR)</label>
+                    <input type="number" id="admin-p-price" placeholder="4500" class="w-full">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-gray-600">Reseller Commission (LKR)</label>
+                    <input type="number" id="admin-p-comm" placeholder="500" class="w-full">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-gray-600">Delivery Charge (LKR)</label>
+                    <input type="number" id="admin-p-del" placeholder="350" class="w-full">
+                </div>
+                <div class="flex flex-col gap-2 md:col-span-2">
+                    <label class="text-sm font-bold text-gray-600">Pack Photo (Select File)</label>
+                    <div class="border-2 border-dashed border-indigo-100 rounded-2xl p-8 text-center bg-indigo-50/30">
+                        <input type="file" id="admin-p-file" class="hidden" onchange="updateFileName(this)">
+                        <label for="admin-p-file" class="cursor-pointer">
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-indigo-400 mb-3"></i>
+                            <p class="text-indigo-900 font-bold" id="file-label">Click to upload product image</p>
+                            <p class="text-xs text-indigo-400 mt-1">PNG, JPG or WEBP (Max 5MB)</p>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="deployNewPack()" id="deploy-btn" class="w-full mt-10 bg-indigo-900 text-white py-5 rounded-2xl font-black text-lg uppercase tracking-widest shadow-xl shadow-indigo-100 hover:bg-black transition-all">
+                Publish to All Platforms
+            </button>
+        </div>
+
+        <div class="mt-12">
+            <h3 class="text-xl font-bold mb-6 text-indigo-950">System Logs</h3>
+            <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="p-4 font-bold text-indigo-900">Activity</th>
+                            <th class="p-4 font-bold text-indigo-900">Status</th>
+                            <th class="p-4 font-bold text-indigo-900">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm text-gray-600">
+                        <tr>
+                            <td class="p-4 border-b border-gray-50">System Initialized</td>
+                            <td class="p-4 border-b border-gray-50"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase">Success</span></td>
+                            <td class="p-4 border-b border-gray-50">Just Now</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
+    <script>
+        function updateFileName(input) {
+            const fileName = input.files[0].name;
+            document.getElementById('file-label').innerText = "Selected: " + fileName;
+        }
+    </script>
 </body>
 </html>
