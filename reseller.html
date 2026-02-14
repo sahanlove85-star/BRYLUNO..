@@ -2,27 +2,121 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Reseller HUB | Bryluno</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-    <nav class="bg-white p-4 shadow-sm flex justify-between px-10">
-        <h1 class="text-xl font-black italic">BRYLUNO PARTNER</h1>
-        <div id="reseller-info" class="font-bold text-purple-900">ID: BRL-705</div>
-    </nav>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRYLUNO | Reseller Hub</title>
     
-    <main class="max-w-6xl mx-auto p-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-900">
-                <p class="text-xs text-gray-500 font-bold uppercase">Total Earnings</p>
-                <h3 class="text-2xl font-black">LKR 0.00</h3>
-            </div>
-            </div>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-        <h2 class="text-lg font-bold mb-4">Available Gift Packs to Sell</h2>
-        <div id="reseller-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #f1f5f9; }
+        .reseller-header { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); }
+        .stat-card { background: white; border-radius: 20px; transition: 0.3s; border: 1px solid #e2e8f0; }
+        .pack-item { background: white; border-radius: 15px; border: 1px solid #e2e8f0; overflow: hidden; }
+        .commission-badge { background: #dcfce7; color: #15803d; font-weight: 900; padding: 4px 10px; border-radius: 8px; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <header class="reseller-header text-white p-8 pb-20 shadow-xl">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-black tracking-tighter italic">BRYLUNO PARTNER</h1>
+                <p class="text-indigo-200 text-sm font-bold">Reseller ID: BRL-OWNER-MODE</p>
             </div>
+            <button onclick="location.href='index.html'" class="bg-white/10 hover:bg-white/20 px-5 py-2 rounded-full text-xs font-bold transition">Storefront</button>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 -mt-12">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="stat-card p-6 flex items-center gap-5 shadow-lg shadow-indigo-100">
+                <div class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-900 text-2xl">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-xs font-bold uppercase">Total Earned</p>
+                    <h3 class="text-2xl font-black text-indigo-950">LKR 0.00</h3>
+                </div>
+            </div>
+            <div class="stat-card p-6 flex items-center gap-5 shadow-lg shadow-indigo-100">
+                <div class="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-900 text-2xl">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-xs font-bold uppercase">Pending Orders</p>
+                    <h3 class="text-2xl font-black text-indigo-950">0</h3>
+                </div>
+            </div>
+            <div class="stat-card p-6 flex items-center gap-5 shadow-lg shadow-indigo-100">
+                <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center text-green-900 text-2xl">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-xs font-bold uppercase">Approved Status</p>
+                    <h3 class="text-2xl font-black text-green-600">Verified</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-black text-indigo-950">Products To Promote</h2>
+            <div class="text-xs font-bold text-indigo-900 bg-white px-4 py-2 rounded-lg border">Updated Real-time</div>
+        </div>
+
+        <div id="reseller-product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+            <div class="col-span-full text-center py-20 text-gray-400">
+                <i class="fa-solid fa-spinner fa-spin text-4xl mb-4"></i>
+                <p>Syncing Reseller Inventory...</p>
+            </div>
+        </div>
+
     </main>
+
+    <div class="fixed bottom-6 right-6">
+        <button class="bg-indigo-950 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-xl hover:scale-110 transition cursor-pointer">
+            <i class="fa-solid fa-headset"></i>
+        </button>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Special Reseller Logic to Load Products with Commission Info
+        function loadResellerStore() {
+            const grid = document.getElementById('reseller-product-grid');
+            const db = firebase.database();
+            
+            db.ref('gift_packs').on('value', (snapshot) => {
+                grid.innerHTML = '';
+                snapshot.forEach((child) => {
+                    const pack = child.val();
+                    grid.innerHTML += `
+                        <div class="pack-item shadow-sm hover:shadow-xl transition-all">
+                            <img src="${pack.img}" class="w-full h-48 object-cover">
+                            <div class="p-5">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-bold text-indigo-950">${pack.name}</h3>
+                                    <span class="commission-badge">+LKR ${pack.commission}</span>
+                                </div>
+                                <div class="flex justify-between items-center mt-4">
+                                    <span class="text-indigo-900 font-black text-lg">Rs. ${pack.price}</span>
+                                    <button onclick="openOrderModal('${child.key}', '${pack.name}', '${pack.price}')" 
+                                            class="bg-indigo-950 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-black transition">
+                                        SUBMIT ORDER
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+        window.onload = loadResellerStore;
+    </script>
 </body>
 </html>
