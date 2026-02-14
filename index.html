@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRYLUNO | Sri Lanka's Ultimate Gift Pack Hub</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+            <div class="logo">BRYLUNO</div>
+            <div class="nav-icons">
+                <i class="fa-solid fa-magnifying-glass search-trigger"></i>
+                <div class="cart-icon"><i class="fa-solid fa-cart-shopping"></i><span id="cart-count">0</span></div>
+                <i class="fa-solid fa-user" onclick="location.href='auth.html'"></i>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <i class="fa-solid fa-xmark" onclick="toggleMenu()"></i>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="#about"><i class="fa-solid fa-circle-info"></i> About BRYLUNO</a></li>
+            <li><a href="#packs"><i class="fa-solid fa-gift"></i> Gift Packs</a></li>
+            <li><a href="reseller.html"><i class="fa-solid fa-handshake"></i> Become a Reseller</a></li>
+            <li><a href="admin.html" id="admin-link" style="color: #ff4d4f;"><i class="fa-solid fa-lock"></i> Master Console</a></li>
+        </ul>
+    </div>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1 id="hero-title">Exclusive Gift Packs</h1>
+            <p id="hero-subtext">All Island Wide Delivery Within 24-48 Hours</p>
+            <button class="btn-primary" onclick="scrollToPacks()">Shop Now</button>
+        </div>
+    </header>
+
+    <section class="categories">
+        <div class="section-header">
+            <h2>Categories</h2>
+        </div>
+        <div class="category-list" id="category-container">
+            <div class="cat-item active">All Gifts</div>
+            <div class="cat-item">Cakes</div>
+            <div class="cat-item">Chocolates</div>
+            <div class="cat-item">Luxury Flowers</div>
+        </div>
+    </section>
+
+    <section class="packs-section" id="packs">
+        <div class="section-header">
+            <h2>New Collections</h2>
+            <div class="filters">
+                <button><i class="fa-solid fa-sort"></i> Sort</button>
+                <button><i class="fa-solid fa-filter"></i> Filter</button>
+            </div>
+        </div>
+        
+        <div class="product-grid" id="main-product-grid">
+            <div class="loading-spinner">Loading Bryluno Assets...</div>
+        </div>
+    </section>
+
+    <section class="about-section" id="about">
+        <div class="container">
+            <h2 id="about-heading">About BRYLUNO</h2>
+            <p id="about-text">BRYLUNO is a premier Network Marketing & Reselling platform in Sri Lanka. We specialize in high-quality Gift Packs with a seamless delivery network across the island.</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="support-card">
+                <i class="fa-brands fa-whatsapp"></i>
+                <div>
+                    <p>WhatsApp Support</p>
+                    <strong>+94 7X XXX XXXX</strong>
+                </div>
+            </div>
+        </div>
+        <div class="footer-links">
+            <p>&copy; 2026 BRYLUNO. All Rights Reserved.</p>
+            <p>Admin Managed System</p>
+        </div>
+    </footer>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="active"><i class="fa-solid fa-house"></i></a>
+        <a href="#packs"><i class="fa-solid fa-heart"></i></a>
+        <a href="reseller.html"><i class="fa-solid fa-handshake-angle"></i></a>
+        <a href="auth.html"><i class="fa-solid fa-user-gear"></i></a>
+    </div>
+
+    <script src="app.js"></script>
+
+</body>
+</html>
