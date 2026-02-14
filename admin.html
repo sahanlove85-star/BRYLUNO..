@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BRYLUNO | Owner Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div class="dash-sidebar">
+        <h1 class="text-2xl font-black italic mb-10 text-gold">BRYLUNO ADMIN</h1>
+        <nav class="space-y-4">
+            <p onclick="showTab('products')" class="cursor-pointer hover:text-gold font-bold">Manage Packs</p>
+            <p onclick="showTab('orders')" class="cursor-pointer hover:text-gold font-bold">Orders Review</p>
+            <p onclick="showTab('resellers')" class="cursor-pointer hover:text-gold font-bold">Reseller Network</p>
+            <p onclick="showTab('content')" class="cursor-pointer hover:text-gold font-bold">Site Content</p>
+        </nav>
+    </div>
+
+    <div class="dash-content">
+        <section id="products-tab">
+            <h2 class="text-2xl font-bold mb-6">Deploy New Gift Pack</h2>
+            <div class="grid grid-cols-2 gap-4 bg-white p-6 rounded-xl border">
+                <input type="text" id="p-name" placeholder="Pack Name" class="p-3 border rounded-lg">
+                <input type="number" id="p-price" placeholder="Sale Price (LKR)" class="p-3 border rounded-lg">
+                <input type="number" id="p-comm" placeholder="Reseller Commission (LKR)" class="p-3 border rounded-lg">
+                <input type="number" id="p-del" placeholder="Delivery Charge (LKR)" class="p-3 border rounded-lg">
+                <input type="file" id="p-img" class="col-span-2 p-2 border border-dashed">
+                <button onclick="addGiftPack()" class="col-span-2 bg-purple-900 text-white py-4 rounded-lg font-bold uppercase tracking-widest">Publish Globally</button>
+            </div>
+        </section>
+
+        <section id="orders-tab" class="mt-10">
+            <h2 class="text-2xl font-bold mb-6">Network Orders</h2>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th><th>Reseller</th><th>Customer</th><th>Status</th><th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-order-list"></tbody>
+            </table>
+        </section>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
