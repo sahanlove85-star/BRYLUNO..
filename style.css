@@ -1,31 +1,220 @@
+/* BRYLUNO MEGA OS - GLOBAL STYLESHEET */
 :root {
     --primary: #512da8; /* Bryluno Purple */
-    --gold: #ffca28;
-    --dark: #0f172a;
-    --light-bg: #f8fafc;
+    --secondary: #ffca28; /* Gold Accent */
+    --accent: #f85606; /* Flash Sale Orange */
+    --bg-light: #f4f6f9;
+    --white: #ffffff;
+    --text-dark: #212121;
+    --text-muted: #757575;
+    --shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-body { background: var(--light-bg); color: var(--dark); }
-
-/* Dynamic Card System */
-.gift-pack-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; transition: 0.3s; position: relative; }
-.gift-pack-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-
-/* Admin Panel Table Styling */
-.admin-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
-.admin-table th, .admin-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-.admin-table th { background: var(--dark); color: white; text-transform: uppercase; font-size: 12px; }
-
-/* Status Badges */
-.status-pending { background: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 5px; font-size: 11px; }
-.status-delivered { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 5px; font-size: 11px; }
-
-/* Dashboard Sidebar */
-.dash-sidebar { background: var(--dark); width: 260px; height: 100vh; position: fixed; color: white; padding: 20px; }
-.dash-content { margin-left: 260px; padding: 30px; }
-
-@media (max-width: 768px) {
-    .dash-sidebar { display: none; }
-    .dash-content { margin-left: 0; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* 1. NAVBAR DESIGN */
+.navbar {
+    background: var(--primary);
+    padding: 15px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: var(--white);
+    font-size: 24px;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: -1px;
+}
+
+.nav-icons {
+    display: flex;
+    gap: 20px;
+    color: var(--white);
+    font-size: 20px;
+}
+
+.cart-icon {
+    position: relative;
+    cursor: pointer;
+}
+
+#cart-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background: var(--secondary);
+    color: var(--text-dark);
+    font-size: 10px;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+/* 2. SIDEBAR */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 280px;
+    height: 100%;
+    background: var(--white);
+    z-index: 2000;
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+}
+
+.sidebar.active { left: 0; }
+
+.sidebar-header {
+    background: var(--primary);
+    color: white;
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links { list-style: none; padding: 20px; }
+.nav-links li { padding: 15px; border-bottom: 1px solid #f0f0f0; }
+.nav-links li a { text-decoration: none; color: var(--text-dark); font-weight: 600; display: flex; gap: 15px; }
+
+/* 3. HERO & CATEGORIES */
+.hero {
+    background: linear-gradient(rgba(81, 45, 168, 0.8), rgba(81, 45, 168, 0.8)), 
+                url('https://images.unsplash.com/photo-1549465220-1d8c9d9c674a?auto=format&fit=crop&q=80');
+    background-size: cover;
+    background-position: center;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.hero h1 { font-size: 32px; font-weight: 900; margin-bottom: 10px; }
+
+.categories { background: white; padding: 15px 0; overflow-x: auto; white-space: nowrap; border-bottom: 1px solid #ddd; }
+.category-list { display: flex; gap: 10px; padding: 0 15px; }
+.cat-item { padding: 8px 20px; border: 1.5px solid #eee; border-radius: 50px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.cat-item.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* 4. PRODUCT GRID (DARAZ STYLE) */
+.packs-section { max-width: 1200px; margin: 20px auto; padding: 0 10px; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.section-header h2 { font-size: 18px; font-weight: 900; text-transform: uppercase; }
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+@media (min-width: 768px) {
+    .product-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.p-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #eee;
+    transition: 0.3s;
+}
+
+.p-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+
+.p-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: var(--secondary);
+    color: black;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.p-details { padding: 12px; }
+.p-title { font-size: 14px; color: var(--text-dark); height: 40px; overflow: hidden; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.p-price { color: var(--primary); font-size: 18px; font-weight: 800; }
+.p-old-price { font-size: 12px; color: var(--text-muted); text-decoration: line-through; }
+
+/* 5. BUTTONS */
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.order-btn {
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid var(--primary);
+    color: var(--primary);
+    padding: 8px;
+    margin-top: 10px;
+    font-weight: 800;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* 6. BOTTOM NAV */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px;
+    border-top: 1px solid #eee;
+    z-index: 1000;
+}
+
+@media (min-width: 768px) { .bottom-nav { display: none; } }
+
+.bottom-nav a { color: var(--text-muted); font-size: 22px; }
+.bottom-nav a.active { color: var(--primary); }
+
+/* 7. ADMIN DASHBOARD SPECIFIC */
+.admin-container { margin-left: 280px; padding: 40px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
+.form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; }
+
+/* 8. ABOUT SECTION */
+.about-section { background: white; padding: 40px 20px; margin-top: 30px; text-align: center; }
+.about-section h2 { margin-bottom: 15px; color: var(--primary); }
