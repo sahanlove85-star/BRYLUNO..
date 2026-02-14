@@ -1,111 +1,175 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ta">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRYLUNO | Sri Lanka's Ultimate Gift Pack Hub</title>
+    <title>BRYLUNO | Sri Lanka's Premium Gift Pack Network</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-</head>
-<body>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
-            <div class="logo">BRYLUNO</div>
-            <div class="nav-icons">
-                <i class="fa-solid fa-magnifying-glass search-trigger"></i>
-                <div class="cart-icon"><i class="fa-solid fa-cart-shopping"></i><span id="cart-count">0</span></div>
-                <i class="fa-solid fa-user" onclick="location.href='auth.html'"></i>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50">
+
+    <div class="bg-indigo-950 text-white text-[10px] md:text-xs py-2 px-4 text-center font-bold tracking-widest uppercase">
+        🚀 <span id="top-announcement">Bryluno Exclusive: All Island Wide Delivery Within 24-48 Hours!</span>
+    </div>
+
+    <nav class="sticky top-0 z-[2000] bg-white border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSideMenu()" class="text-indigo-950 text-2xl p-2 hover:bg-gray-100 rounded-full transition">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+                <h1 class="text-2xl md:text-3xl font-black italic tracking-tighter text-indigo-950">BRYLUNO</h1>
+            </div>
+
+            <div class="hidden md:flex flex-1 mx-12 relative">
+                <input type="text" id="globalSearch" onkeyup="dynamicSearch()" placeholder="Search Birthday Packs, Anniversary Gifts..." class="w-full bg-gray-100 border-none py-3 px-6 rounded-xl focus:ring-2 ring-indigo-500 transition-all outline-none">
+                <i class="fa-solid fa-magnifying-glass absolute right-4 top-4 text-gray-400"></i>
+            </div>
+
+            <div class="flex items-center gap-3 md:gap-6 text-indigo-950">
+                <div class="relative cursor-pointer group" onclick="toggleCart()">
+                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 rounded-full">0</span>
+                </div>
+                <button onclick="location.href='reseller.html'" class="hidden md:block bg-indigo-100 text-indigo-900 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-200">Reseller Hub</button>
+                <i class="fa-solid fa-circle-user text-2xl cursor-pointer" onclick="location.href='admin.html'"></i>
             </div>
         </div>
     </nav>
 
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3>Menu</h3>
-            <i class="fa-solid fa-xmark" onclick="toggleMenu()"></i>
+    <div id="mobileSidebar" class="fixed inset-y-0 left-[-100%] w-80 bg-white z-[3000] shadow-2xl transition-all duration-500">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-10">
+                <span class="text-2xl font-black italic text-indigo-950">BRYLUNO</span>
+                <i onclick="toggleSideMenu()" class="fa-solid fa-xmark text-2xl cursor-pointer"></i>
+            </div>
+            <ul class="space-y-4 font-bold text-gray-600">
+                <li><a href="index.html" class="flex items-center gap-4 p-3 hover:bg-indigo-50 rounded-xl text-indigo-600"><i class="fa-solid fa-house w-6"></i> Home</a></li>
+                <li><a href="#packs" class="flex items-center gap-4 p-3 hover:bg-indigo-50 rounded-xl"><i class="fa-solid fa-gift w-6"></i> All Gift Packs</a></li>
+                <li><a href="reseller.html" class="flex items-center gap-4 p-3 hover:bg-amber-50 rounded-xl text-amber-600"><i class="fa-solid fa-handshake w-6"></i> Become a Reseller</a></li>
+                <hr>
+                <p class="text-[10px] uppercase text-gray-400 tracking-widest mt-6">Owner Controls</p>
+                <li><a href="admin.html" class="flex items-center gap-4 p-3 hover:bg-red-50 rounded-xl text-red-600"><i class="fa-solid fa-shield-halved w-6"></i> Admin Dashboard</a></li>
+            </ul>
         </div>
-        <ul class="nav-links">
-            <li><a href="#"><i class="fa-solid fa-house"></i> Home</a></li>
-            <li><a href="#about"><i class="fa-solid fa-circle-info"></i> About BRYLUNO</a></li>
-            <li><a href="#packs"><i class="fa-solid fa-gift"></i> Gift Packs</a></li>
-            <li><a href="reseller.html"><i class="fa-solid fa-handshake"></i> Become a Reseller</a></li>
-            <li><a href="admin.html" id="admin-link" style="color: #ff4d4f;"><i class="fa-solid fa-lock"></i> Master Console</a></li>
-        </ul>
     </div>
 
-    <header class="hero">
-        <div class="hero-content">
-            <h1 id="hero-title">Exclusive Gift Packs</h1>
-            <p id="hero-subtext">All Island Wide Delivery Within 24-48 Hours</p>
-            <button class="btn-primary" onclick="scrollToPacks()">Shop Now</button>
+    <header class="relative bg-indigo-900 h-[300px] md:h-[500px] flex items-center overflow-hidden">
+        <div class="absolute inset-0 opacity-40">
+            <img src="https://images.unsplash.com/photo-1549465220-1d8c9d9c674a?auto=format&fit=crop&q=80" alt="Banner" class="w-full h-full object-cover">
+        </div>
+        <div class="relative max-w-7xl mx-auto px-4 text-center md:text-left text-white">
+            <h2 class="text-4xl md:text-7xl font-black leading-tight mb-4" id="main-hero-text">The Art of <br><span class="text-yellow-400 italic">Premium Gifting.</span></h2>
+            <p class="text-lg md:text-xl text-indigo-100 mb-8 max-w-xl" id="sub-hero-text">Hand-curated luxury gift packs for your loved ones. Delivering smiles across Sri Lanka.</p>
+            <div class="flex flex-col md:flex-row gap-4">
+                <button onclick="scrollToPacks()" class="bg-yellow-400 text-indigo-950 px-8 py-4 rounded-xl font-black text-lg shadow-xl hover:bg-white transition">Shop Now</button>
+                <button onclick="location.href='reseller.html'" class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20">Become a Partner</button>
+            </div>
         </div>
     </header>
 
-    <section class="categories">
-        <div class="section-header">
-            <h2>Categories</h2>
-        </div>
-        <div class="category-list" id="category-container">
-            <div class="cat-item active">All Gifts</div>
-            <div class="cat-item">Cakes</div>
-            <div class="cat-item">Chocolates</div>
-            <div class="cat-item">Luxury Flowers</div>
-        </div>
+    <section class="bg-white border-b overflow-x-auto">
+        <div class="max-w-7xl mx-auto flex items-center gap-4 p-4 no-scrollbar" id="category-ribbon">
+            <button class="cat-chip active">All Packs</button>
+            </div>
     </section>
 
-    <section class="packs-section" id="packs">
-        <div class="section-header">
-            <h2>New Collections</h2>
-            <div class="filters">
-                <button><i class="fa-solid fa-sort"></i> Sort</button>
-                <button><i class="fa-solid fa-filter"></i> Filter</button>
+    <main class="max-w-7xl mx-auto px-4 py-12" id="packs">
+        <div class="flex justify-between items-end mb-10">
+            <div>
+                <h3 class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-2">Exclusive</h3>
+                <h2 class="text-3xl font-black text-indigo-950">Curated Gift Packs</h2>
+            </div>
+            <div class="hidden md:flex gap-2">
+                <button class="bg-white border p-3 rounded-xl hover:shadow-md transition"><i class="fa-solid fa-arrow-up-wide-short"></i> Price</button>
+                <button class="bg-white border p-3 rounded-xl hover:shadow-md transition"><i class="fa-solid fa-filter"></i> Filters</button>
             </div>
         </div>
-        
-        <div class="product-grid" id="main-product-grid">
-            <div class="loading-spinner">Loading Bryluno Assets...</div>
+
+        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-8">
+            <div class="col-span-full py-20 text-center">
+                <i class="fa-solid fa-spinner fa-spin text-4xl text-indigo-200 mb-4"></i>
+                <p class="text-gray-400 font-bold italic">Bryluno Cloud is syncing assets...</p>
+            </div>
+        </div>
+    </main>
+
+    <section class="bg-white py-20" id="about-us">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-black text-indigo-950 mb-6">About BRYLUNO</h2>
+            <p class="text-gray-600 leading-relaxed text-lg" id="about-content">
+                BRYLUNO is more than a gift shop. It's a next-generation Network Marketing & Dropshipping ecosystem in Sri Lanka. 
+                We empower local entrepreneurs to build their own businesses through our premium gift pack reselling model. 
+                All Island Delivery. 100% Quality Guaranteed.
+            </p>
         </div>
     </section>
 
-    <section class="about-section" id="about">
-        <div class="container">
-            <h2 id="about-heading">About BRYLUNO</h2>
-            <p id="about-text">BRYLUNO is a premier Network Marketing & Reselling platform in Sri Lanka. We specialize in high-quality Gift Packs with a seamless delivery network across the island.</p>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="footer-top">
-            <div class="support-card">
-                <i class="fa-brands fa-whatsapp"></i>
-                <div>
-                    <p>WhatsApp Support</p>
-                    <strong>+94 7X XXX XXXX</strong>
+    <footer class="bg-indigo-950 text-white py-12 px-4">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="col-span-1 md:col-span-2">
+                <h2 class="text-3xl font-black italic mb-6">BRYLUNO</h2>
+                <p class="text-indigo-200 mb-6">The No.1 Partner for Premium Gift Packs in Sri Lanka. Join our growing network of 500+ resellers today.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="text-2xl hover:text-yellow-400"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#" class="text-2xl hover:text-yellow-400"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="text-2xl hover:text-yellow-400"><i class="fa-brands fa-instagram"></i></a>
                 </div>
             </div>
+            <div>
+                <h4 class="font-bold mb-6 uppercase text-sm tracking-widest text-yellow-400">Quick Links</h4>
+                <ul class="space-y-3 text-indigo-200">
+                    <li><a href="reseller.html" class="hover:text-white">Reseller Registration</a></li>
+                    <li><a href="#about-us" class="hover:text-white">Our Business Model</a></li>
+                    <li><a href="#" class="hover:text-white">Delivery Information</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-6 uppercase text-sm tracking-widest text-yellow-400">Owner Contact</h4>
+                <ul class="space-y-3 text-indigo-200">
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-envelope"></i> bryluno.pvt.ltd@gmail.com</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-phone"></i> +94 75 235 1754</li>
+                </ul>
+            </div>
         </div>
-        <div class="footer-links">
-            <p>&copy; 2026 BRYLUNO. All Rights Reserved.</p>
-            <p>Admin Managed System</p>
+        <div class="max-w-7xl mx-auto border-t border-white/10 mt-12 pt-8 text-center text-xs text-indigo-400">
+            &copy; 2026 BRYLUNO LUXURY NETWORK. ALL RIGHTS RESERVED. CUSTOM BUILT SYSTEM.
         </div>
     </footer>
 
-    <div class="bottom-nav">
-        <a href="index.html" class="active"><i class="fa-solid fa-house"></i></a>
-        <a href="#packs"><i class="fa-solid fa-heart"></i></a>
-        <a href="reseller.html"><i class="fa-solid fa-handshake-angle"></i></a>
-        <a href="auth.html"><i class="fa-solid fa-user-gear"></i></a>
-    </div>
+    <a href="https://wa.me/94752351754" class="fixed bottom-24 right-6 md:bottom-10 md:right-10 bg-[#25D366] text-white w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center text-3xl shadow-2xl hover:scale-110 transition z-[2000]">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-4 z-[2000]">
+        <a href="index.html" class="text-indigo-900 flex flex-col items-center gap-1"><i class="fa-solid fa-house"></i><span class="text-[10px] font-bold">Home</span></a>
+        <a href="#packs" class="text-gray-400 flex flex-col items-center gap-1"><i class="fa-solid fa-grid-2"></i><span class="text-[10px] font-bold">Packs</span></a>
+        <a href="reseller.html" class="text-gray-400 flex flex-col items-center gap-1"><i class="fa-solid fa-rocket"></i><span class="text-[10px] font-bold">Reseller</span></a>
+        <a href="admin.html" class="text-gray-400 flex flex-col items-center gap-1"><i class="fa-solid fa-user-gear"></i><span class="text-[10px] font-bold">Admin</span></a>
+    </nav>
 
     <script src="app.js"></script>
-
+    <script>
+        function toggleSideMenu() {
+            const sidebar = document.getElementById('mobileSidebar');
+            if (sidebar.style.left === '0px') {
+                sidebar.style.left = '-100%';
+            } else {
+                sidebar.style.left = '0px';
+            }
+        }
+        function scrollToPacks() {
+            document.getElementById('packs').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
 </body>
-</html>
+        </html>
