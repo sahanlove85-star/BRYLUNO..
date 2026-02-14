@@ -1,72 +1,139 @@
-// Bryluno System Configuration
+/* BRYLUNO MASTER OS v2.0 - CORE LOGIC */
+
+// 1. DATABASE CONFIGURATION
 const firebaseConfig = {
     apiKey: "AIzaSyAoYDclGhL75b14C1fT_5SRsrrEt8B6iyU",
+    authDomain: "bryluno-system.firebaseapp.com",
     databaseURL: "https://bryluno-system-default-rtdb.firebaseio.com",
-    projectId: "bryluno-system"
+    projectId: "bryluno-system",
+    storageBucket: "bryluno-system.firebasestorage.app",
+    messagingSenderId: "666741527124",
+    appId: "1:666741527124:web:bebf8a61c085eba11cd3c1"
 };
+
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// 1. ADMIN: ADD NEW GIFT PACK (WITH CUSTOM COMMISSION & DELIVERY)
-async function addGiftPack() {
-    const name = document.getElementById('p-name').value;
-    const price = document.getElementById('p-price').value;
-    const commission = document.getElementById('p-comm').value;
-    const delivery = document.getElementById('p-del').value;
-    const file = document.getElementById('p-img').files[0];
-
-    // Image Upload to Cloudinary Logic
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'bryluno-products');
-
-    const res = await fetch("https://api.cloudinary.com/v1_1/djsrfrxcu/image/upload", { method: 'POST', body: formData });
-    const imgData = await res.json();
-
-    await db.ref('gift_packs').push({
-        name, price, commission, delivery, img: imgData.secure_url, status: 'active'
-    });
-    alert("System Updated Successfully!");
-    location.reload();
+// 2. GLOBAL UI CONTROLS
+function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('active');
 }
 
-// 2. RESELLER: SUBMIT ORDER
-function submitOrder(packId, resellerId) {
-    const customer = {
-        name: document.getElementById('c-name').value,
-        phone: document.getElementById('c-phone').value,
-        address: document.getElementById('c-address').value
-    };
+// 3. LIVE STORE ENGINE (100% Dynamic)
+function initStore() {
+    const productGrid = document.getElementById('main-product-grid');
+    if(!productGrid) return; // index.html-ல் இல்லையென்றால் இயங்காது
 
-    db.ref('orders').push({
-        packId, resellerId, customer, status: 'Pending', timestamp: Date.now()
-    });
-    alert("Order Submitted to Admin for Review!");
-}
+    // Fetching Data from Bryluno Cloud
+    db.ref('gift_packs').on('value', (snapshot) => {
+        productGrid.innerHTML = ''; // Clear current display
+        
+        if(!snapshot.exists()) {
+            productGrid.innerHTML = '<p class="loading-text">New Packs Coming Soon...</p>';
+            return;
+        }
 
-// 3. ADMIN: UPDATE CONTENT (ABOUT US, RULES)
-function updateSiteContent(section, value) {
-    db.ref('settings/' + section).set(value);
-}
+        snapshot.forEach((child) => {
+            const pack = child.val();
+            const key = child.key;
 
-// 4. DYNAMIC LOADER (FRONTEND)
-function loadStore() {
-    db.ref('gift_packs').on('value', snap => {
-        const container = document.getElementById('store-grid');
-        if(!container) return;
-        container.innerHTML = '';
-        snap.forEach(child => {
-            const p = child.val();
-            container.innerHTML += `
-                <div class="gift-pack-card">
-                    <img src="${p.img}" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="font-bold text-lg">${p.name}</h3>
-                        <p class="text-purple-700 font-black">Rs. ${p.price}</p>
-                        <button onclick="orderViaWA('${p.name}', ${p.price})" class="w-full mt-3 bg-purple-900 text-white py-2 rounded-lg font-bold">ORDER PACK</button>
+            // Business Logic: Generate fake discount (15% higher old price)
+            const oldPrice = Math.floor(pack.price * 1.15);
+
+            productGrid.innerHTML += `
+                <div class="p-card animate-up">
+                    <div class="p-badge">TOP CHOICE</div>
+                    <img src="${pack.img}" class="p-img" alt="${pack.name}">
+                    <div class="p-details">
+                        <h3 class="p-title">${pack.name}</h3>
+                        <div class="p-price-row">
+                            <span class="p-old-price">Rs. ${oldPrice.toLocaleString()}</span><br>
+                            <span class="p-price">Rs. ${Number(pack.price).toLocaleString()}</span>
+                        </div>
+                        <button class="order-btn" onclick="openOrderModal('${key}', '${pack.name}', '${pack.price}')">
+                            <i class="fa-solid fa-cart-plus"></i> RESERVE NOW
+                        </button>
                     </div>
                 </div>
             `;
         });
     });
-      }
+}
+
+// 4. SMART ORDERING SYSTEM (WhatsApp Integration)
+function openOrderModal(id, name, price) {
+    // This is the BRYLUNO Business Flow
+    const message = `*BRYLUNO LUXURY ORDER*%0A--------------------------%0A*Pack Name:* ${name}%0A*Price:* Rs. ${price}%0A*Status:* Pending Verification%0A--------------------------%0A_Sent via Bryluno Network_`;
+    
+    const whatsappLink = `https://wa.me/94752351754?text=${message}`;
+    window.open(whatsappLink, '_blank');
+}
+
+// 5. ADMIN CONTROL: DEPLOY NEW PACKS
+async function deployNewPack() {
+    const name = document.getElementById('admin-p-name').value;
+    const price = document.getElementById('admin-p-price').value;
+    const comm = document.getElementById('admin-p-comm').value;
+    const del = document.getElementById('admin-p-del').value;
+    const file = document.getElementById('admin-p-file').files[0];
+    const btn = document.getElementById('deploy-btn');
+
+    if(!name || !price || !file) {
+        alert("Owner, Please fill all the fields!");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = "SYNCING WITH CLOUD...";
+
+    // Upload to Cloudinary (Owner Asset Storage)
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'bryluno-products');
+
+    try {
+        const response = await fetch("https://api.cloudinary.com/v1_1/djsrfrxcu/image/upload", {
+            method: 'POST',
+            body: formData
+        });
+        const imgData = await response.json();
+
+        // Save to Database
+        await db.ref('gift_packs').push({
+            name: name,
+            price: price,
+            commission: comm,
+            delivery: del,
+            img: imgData.secure_url,
+            createdAt: Date.now()
+        });
+
+        alert("Pack Deployed Successfully!");
+        location.reload();
+    } catch (error) {
+        console.error(error);
+        alert("System Error! Check Connection.");
+        btn.disabled = false;
+    }
+}
+
+// 6. SEARCH SYSTEM (Real-time Filter)
+function brylunoSearch() {
+    let input = document.getElementById('mainSearch').value.toUpperCase();
+    let cards = document.getElementsByClassName('p-card');
+    
+    for (let i = 0; i < cards.length; i++) {
+        let title = cards[i].getElementsByClassName('p-title')[0].innerText;
+        if (title.toUpperCase().indexOf(input) > -1) {
+            cards[i].style.display = "";
+        } else {
+            cards[i].style.display = "none";
+        }
+    }
+}
+
+// Start the System
+window.onload = () => {
+    initStore();
+};
