@@ -1,48 +1,31 @@
-/* style.css */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
-
 :root {
-    --primary: #512da8;
-    --secondary: #ffca28;
+    --primary: #512da8; /* Bryluno Purple */
+    --gold: #ffca28;
     --dark: #0f172a;
-    --light: #f8fafc;
-    --accent: #ef4444;
+    --light-bg: #f8fafc;
 }
 
-body {
-    font-family: 'Outfit', sans-serif;
-    background-color: var(--light);
-    margin: 0;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+body { background: var(--light-bg); color: var(--dark); }
 
-/* Kapruka Style Cards */
-.product-card {
-    background: white;
-    border-radius: 15px;
-    border: 1px solid #e2e8f0;
-    transition: all 0.3s ease;
-}
+/* Dynamic Card System */
+.gift-pack-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; transition: 0.3s; position: relative; }
+.gift-pack-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
-.product-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
+/* Admin Panel Table Styling */
+.admin-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+.admin-table th, .admin-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+.admin-table th { background: var(--dark); color: white; text-transform: uppercase; font-size: 12px; }
 
-/* Admin Specific UI */
-.admin-sidebar {
-    background: var(--dark);
-    color: white;
-    height: 100vh;
-    padding: 20px;
-}
+/* Status Badges */
+.status-pending { background: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 5px; font-size: 11px; }
+.status-delivered { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 5px; font-size: 11px; }
 
-/* Button Styles */
-.btn-primary {
-    background: var(--primary);
-    color: white;
-    padding: 12px 25px;
-    border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
+/* Dashboard Sidebar */
+.dash-sidebar { background: var(--dark); width: 260px; height: 100vh; position: fixed; color: white; padding: 20px; }
+.dash-content { margin-left: 260px; padding: 30px; }
+
+@media (max-width: 768px) {
+    .dash-sidebar { display: none; }
+    .dash-content { margin-left: 0; }
 }
